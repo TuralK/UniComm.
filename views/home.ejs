@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="/login-register-styles.css">
+  <title>Document</title>
+  <style>
+    .university{
+      font-size: 6px;
+      width: 250px;
+      height: 30px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h4>Home Page</h4>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <% if (user) { %>
+          <% if (userType === 'student') { %>
+            <li><a href="/profile">Profile</a></li>
+          <% } else if (userType === 'admin') { %>
+            <li><a href="/admin/profile">Profile</a></li>
+          <% } %>
+          <li><a href="/logout">Logout</a></li>
+        <% } else { %>  
+          <li><a href="/login">Login</a></li>
+          <li><a href="/register">Register</a></li>
+        <% } %>
+    </ul>
+  </nav>
+
+ 
+    <% universities.forEach(function(university) { %> 
+      <div class="university">
+        <a href="/university/<%= university.uni_id %>"><%= university.uni_name %></a>
+      </div>
+    <% }); %>
+
+
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+</body>
+</html>

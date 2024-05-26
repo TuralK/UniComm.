@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniComm</title>
+  <link rel="stylesheet" href="/login-register-styles.css">
+</head>
+
+<body>
+  <nav>
+    <h1><a href="/">UniComm</a></h1>
+  </nav>
+
+  <form action="/register" method="POST" enctype="multipart/form-data">
+    <h2>Sign up</h2>
+    <input type="email" placeholder="Enter your email" id="email" name="email" required>
+    <div class="email error"></div>
+    <input type="text" placeholder="Enter your username" id="username" name="username" required>
+    <input type="password" placeholder="Enter your password" id="password" name="password" required>
+    <div class="password error"></div>
+    
+    <div class="dropdown">
+      <div class="custom-select-wrapper">
+        <select id="university" name="university" required class="custom-select">
+          <option value="">Select University</option>
+          <% universities.forEach(function(university) { %>
+            <option value="<%= university.uni_id %>"><%= university.uni_name %></option>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+    
+    <div class="dropdown">
+      <div class="custom-select-wrapper">
+        <select id="faculty" name="faculty" required class="custom-select">
+          <option value="">Select Faculty</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="dropdown">
+      <div class="custom-select-wrapper">
+        <select id="department" name="department" required class="custom-select">
+          <option value="">Select Department</option>
+        </select>
+      </div>
+    </div>
+    
+    
+    <input type="file" name="studentFile" id="studentFile" accept=".pdf,.txt,.docx" required>
+    <div class="duplicate error"></div>
+    <button type="submit">Sign Up</button>
+    <li><a href="/login">Login</a></li>
+  </form>
+
+
+  <script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+      const fileInput = document.getElementById('studentFile');
+      const file = fileInput.files[0];
+      const allowedTypes = ['application/pdf', 'text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+      if (!allowedTypes.includes(file.type)) {
+        e.preventDefault();
+        alert('Error: Only files (pdf, txt, docx) are allowed.');
+      }
+    });
+
+    document.getElementById('university').addEventListener('change', async function () {
+      const universityId = this.value;
+      const facultySelect = document.getElementById('faculty');
+      const departmentSelect = document.getElementById('department');
+
+      facultySelect.innerHTML = '<option value="">Select Faculty</option>';
+      departmentSelect.innerHTML = '<option value="">Select Department</option>';
+
+      if (universityId) {
+        const response = await fetch(`/api/faculties/${universityId}`);
+        const faculties = await response.json();
+        faculties.forEach(faculty => {
+          const option = document.createElement('option');
+          option.value = faculty.fakulte_id;
+          option.textContent = faculty.fakulte_ad;
+          facultySelect.appendChild(option);
+        });
+      }
+    });
+
+    document.getElementById('faculty').addEventListener('change', async function () {
+      const facultyId = this.value;
+      const departmentSelect = document.getElementById('department');
+
+      departmentSelect.innerHTML = '<option value="">Select Department</option>';
+
+      if (facultyId) {
+        const response = await fetch(`/api/departments/${facultyId}`);
+        const departments = await response.json();
+        departments.forEach(department => {
+          const option = document.createElement('option');
+          option.value = department.bolum_id;
+          option.textContent = department.bolum_ad;
+          departmentSelect.appendChild(option);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
