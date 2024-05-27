@@ -1,74 +1,59 @@
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UniComm</title>
-  <link rel="stylesheet" href="/login-register-styles.css">
-</head>
-<body>
-  <nav>
-    <h1><a href="/">UniComm</a></h1>
-  </nav>
-
-<form action="/login" method="POST">
-  <h2>Login</h2>
-  <label for="email">Email</label>
-  <input type="text" id="email" name="email" class="placeholder-input" placeholder="Enter your email" required>
-  <label for="password">Password</label>
-  <input type="password" id="password" name="password" class="placeholder-input" placeholder="Enter your password" required>
-  <div class="login error"></div>
-  <button type="submit">Login</button>
-  <a class="forgot-password", href="/login">Forgot your password?</a>
-  <div class="separator"></div> <!-- Add this line -->
-  <p class="signup-text">Don't have an account yet? <a href="/register">Sign up</a> instead.</p>
-</form>
-
-<script>
-  const form = document.querySelector('form');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const error = document.querySelector('.login.error');
-    // Reset errors
-    error.textContent = '';
-    // Get values
-    const email = form.email.value;
-    const password = form.password.value;
-    try {
-        const res = await fetch('/login', { 
-            method: 'POST', 
-            body: JSON.stringify({ email, password }),
-            headers: {'Content-Type': 'application/json'}
-        });
-        const data = await res.json();
-        if (data.errors) {
-            error.textContent = data.errors.error;
-        }
-        if (data.user) {
-            location.assign('/'); 
-        }
-    } catch (err) {
-        error.textContent = 'Failed to communicate with the server';  
-    }
-  });
-</script>
-
-<!--
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UniComm</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>UniComm - Login</title>
+   <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+   <link rel="stylesheet" href="/login.css">
+
 </head>
 
 <body>
-  <form action="/login" method="POST">
-    <input type="email" placeholder="Email" id="email" name="email" required>
-    <input type="password" placeholder="Password" id="password" name="password" required>
-    <button type="submit">Log In</button>
-    <li><a href="/register">Register</a></li>
-  </form>
+    <div class="login">
+      <img src="" alt="login image" class="login__img" id="randomImage">
+      <form action="/" method="POST" class="login__form">
+        <a href="/" style="color: white;"><h1 class="login__title" style="font-size: 38px; font-weight: bold;">UniComm</h1></a>
+        <h2 class="login__title">Login</h2>
+
+        <div class="login__content">
+            <div class="login__box">
+              <i class="ri-mail-line login__icon"></i>
+
+              <div class="login__box-input">
+                <input type="email" placeholder=" " id="email" name="email" required class="login__input">
+                <label for="login-email" class="login__label">Email</label>
+              </div>
+            </div>
+
+            <div class="login__box">
+              <i class="ri-lock-2-line login__icon"></i>
+
+              <div class="login__box-input">
+                <input type="password" placeholder=" " id="password" name="password" required class="login__input">
+                <label for="login-pass" class="login__label">Password</label>
+                <i class="ri-eye-off-line login__eye" id="login-eye"></i>
+              </div>
+            </div>
+        </div>
+
+        <div class="login error"></div>
+
+        <div class="login__check">
+          <a href="#" class="login__forgot">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="login__button">Login</button>
+
+        <p class="login__register">
+          Don't have an account? <a href="/register">Register</a>
+        </p>
+      </form>
+    </div>
+
+   <script src="/login-handling.js"></script>
+   <script src="/password_visibility.js"></script>
+   <script src="/random_picture.js"></script>
 </body>
 </html>
--->

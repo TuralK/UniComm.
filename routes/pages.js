@@ -178,7 +178,4 @@ router.get('/university/:id', auth, async (req, res) => {
   }
 });
 
-//////////////////////////////////// this code will be in auth route //////////////////////////////
-
-
 module.exports = router;

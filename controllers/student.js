@@ -88,7 +88,7 @@ exports.register = (req, res) => {
       // Commit the transaction
       await transaction.commit();
 
-      res.status(200).json({ student: newStudent.id });
+      res.redirect("/");
 
     } catch (error) {
       // Rollback the transaction in case of error
