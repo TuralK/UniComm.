@@ -11,10 +11,15 @@ const Answer_model = require('../models/answer-model');
 
 const router = express.Router();
 
+//=====================Move some gets to auth(according to user type)=====================//
+
+
 //home page, (auth returns user type, null if not user)
 router.get('/', auth, async (req, res) => {
   try{
     const universities = await University_model.findAll({ where: { status: 1 } });
+    const universityDataValues = universities.map(university => university.dataValues);
+
     let userType = null;
     if(req.user !== null){
       userType = req.user.userType;
@@ -22,7 +27,7 @@ router.get('/', auth, async (req, res) => {
     res.render('home', {
       user: req.user,
       userType: userType,
-      universities
+      universities: universityDataValues
     });
   } catch(error){
     console.error("Error fetching universities:", error);
@@ -32,9 +37,9 @@ router.get('/', auth, async (req, res) => {
 
 
 //profile page for user
-router.get('/profile', [auth, checkUserRole("student")], (req, res) => {
+router.get('/profile', auth, (req, res) => {
   if (req.user) {
-    res.render('Student/profile', {
+    res.render('profile', {
       user: req.user
     });
   } else {
@@ -42,20 +47,28 @@ router.get('/profile', [auth, checkUserRole("student")], (req, res) => {
   }
 });
 
-
 //register page
 router.get("/register", async (req, res) => {
-  try {
-    const universities = await University_model.findAll({ where: { status: 1 } });
-    res.render("register", { universities });
-  } catch (error) {
-    console.error("Error fetching universities:", error);
-    res.status(500).send("Error fetching universities.");
+  if(req.user) {
+    res.redirect("/");
+  } else {
+    try {
+      const universities = await University_model.findAll({ where: { status: 1 } });
+      const universityDataValues = universities.map(university => university.dataValues);
+      res.render("register", { universities: universityDataValues });
+    } catch (error) {
+      console.error("Error fetching universities:", error);
+      res.status(500).send("Error fetching universities.");
+    }
   }
 });
 
-router.get("/login", (req, res) => {
-  res.render("login");
+router.get("/login", auth,(req, res) => {
+  if(req.user){
+    res.redirect("/");
+  } else {
+    res.render("login");
+  }
 });
 
 
@@ -74,18 +87,19 @@ router.get("/displayFiles", [auth, checkUserRole("admin")], async (req, res) => 
         }
       }
     });
+    const uncheckedStudentFilesDataValues = uncheckedStudentFiles.map(uncheckedStudentFile => uncheckedStudentFile.dataValues);
+
     res.render("Admin/displayFiles", {
-      user: admin,
+      user: admin.dataValues,
       usertype: "admin",
       dataValues: admin.dataValues,
-      studentFiles: uncheckedStudentFiles
+      studentFiles: uncheckedStudentFilesDataValues
     });
   } catch (error) {
     console.error("Error fetching Student Files requests:", error);
     res.status(500).send("Error fetching Student Files requests.");
   }
 });
-
 
 //admin's page, after clicking to any request displayed on displayFiles, it opens file where admin can accept or reject request
 router.get('/file/:username', [auth, checkUserRole("admin")], async (req, res) => {
@@ -105,7 +119,7 @@ router.get('/file/:username', [auth, checkUserRole("admin")], async (req, res) =
         {
           file,
           username: req.params.username,
-          student
+          student: student.dataValues
         });
     } else {
       res.status(404).send('File not found');
@@ -152,6 +166,7 @@ router.get('/university/:id', auth, async (req, res) => {
         }
       }
     });
+    const questionsDataValues = questions.map(question => question.dataValues);
     
     let user = null;
     let userType = null;
@@ -169,8 +184,8 @@ router.get('/university/:id', auth, async (req, res) => {
     res.render('universityDetails', {
       user: user,
       userType: userType,
-      university,
-      questions
+      university: university.dataValues,
+      questions: questionsDataValues
     });
   } catch (error) {
     console.error("Error fetching university details:", error);

@@ -3,70 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <link rel="stylesheet" href="/login-register-styles.css">
   <title>University Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="/home.css">
+  <link rel="stylesheet" href="/universityDetails.css">
 </head>
 <body>
-  <nav>
-    <h4>University Details</h4>
-    <ul>
-        <li><a href="/">Home</a></li>
+  <nav class="nav">
+    <div class="nav__container">
+      <a href="/" class="nav__logo">UniComm</a>
+      <ul class="nav__menu">
+        <li class="nav__item"><a href="/" class="nav__link">Home</a></li>
         <% if(user) { %>
-        <li><a href="/profile">Profile</a></li>
-        <li><a href="/logout">Logout</a></li>
+          <li class="nav__item"><a href="/profile" class="nav__link">Profile</a></li>
+          <% if(userType === 'admin') { %>
+            <li class="nav__item"><a href="/displayFiles" class="nav__link">Registration Verification</a></li>
+          <% } %>
+          <li class="nav__item"><a href="/logout" class="nav__link">Logout</a></li>
         <% } else { %>  
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
+          <li class="nav__item"><a href="/login" class="nav__link">Login</a></li>
+          <li class="nav__item"><a href="/register" class="nav__link">Register</a></li>
         <% } %>
-    </ul>
+      </ul>
+    </div>
   </nav>
 
-  <div class="container">
-    <h1><%= university.uni_name %></h1>
-    <!-- Add more university details as needed -->
-
-    <h2>Ask a Question</h2>
-    <form action="/askQuestion" method="POST">
-      <input type="hidden" name="uni_id" value="<%= university.uni_id %>">
-      <div class="form-group">
-        <textarea class="form-control" name="question_text" rows="3" placeholder="Ask your question here..." required></textarea>
+  <main class="main">
+    <div class="main__content">
+      <h1 class="main__title"><%= university.uni_name %></h1>
+      
+      <!-- Section for university details -->
+      <div class="university-details">
+        <!-- Add more university details here -->
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
 
-    <h2>Questions</h2>
-    <ul>
-      <% if (questions && questions.length) { %>
-        <% questions.forEach(question => { %>
-          <li>
-            <p><%= question.question_text %> (Asked on <%= question.created_at.toDateString() %>)</p>
-            <ul>
-              <% if (question.Answers && question.Answers.length) { %>
-                <% question.Answers.forEach(answer => { %>
-                  <li><%= answer.answer_text %> (Answered by <%= answer.Student.username %> on <%= answer.created_at.toDateString() %>)</li>
-                <% }) %>
-              <% } else { %>
-                <li>No answers yet.</li>
+      <h2>Ask a Question</h2>
+      <form action="/askQuestion" method="POST">
+        <input type="hidden" name="uni_id" value="<%= university.uni_id %>">
+        <div class="form-group">
+          <textarea class="form-control" name="question_text" rows="3" placeholder="Ask your question here..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+
+      <h2>Questions</h2>
+      <ul class="questions-list">
+        <% if (questions && questions.length) { %>
+          <% questions.forEach(question => { %>
+            <li class="question-item">
+              <p><%= question.question_text %> (Asked on <%= question.created_at.toDateString() %>)</p>
+              <ul class="answers-list">
+                <% if (question.Answers && question.Answers.length) { %>
+                  <% question.Answers.forEach(answer => { %>
+                    <li class="answer-item"><%= answer.answer_text %> (Answered by <%= answer.Student.username %> on <%= answer.created_at.toDateString() %>)</li>
+                  <% }) %>
+                <% } else { %>
+                  <li>No answers yet.</li>
+                <% } %>
+              </ul>
+              <% if (user && userType === 'student' && user.university_id === university.uni_id) { %>
+                <form action="/answerQuestion" method="POST">
+                  <input type="hidden" name="question_id" value="<%= question.question_id %>">
+                  <div class="form-group">
+                    <textarea class="form-control" name="answer_text" rows="2" placeholder="Write your answer here..." required></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-success">Submit Answer</button>
+                </form>
               <% } %>
-            </ul>
-            <% if (user && userType === 'student' && user.university_id === university.uni_id) { %>
-              <form action="/answerQuestion" method="POST">
-                <input type="hidden" name="question_id" value="<%= question.question_id %>">
-                <div class="form-group">
-                  <textarea class="form-control" name="answer_text" rows="2" placeholder="Write your answer here..." required></textarea>
-                </div>
-                <button type="submit" class="btn btn-success">Submit Answer</button>
-              </form>
-            <% } %>
-          </li>
-        <% }) %>
-      <% } else { %>
-        <li>No questions have been asked yet.</li>
-      <% } %>
-    </ul>
-  </div>
+            </li>
+          <% }) %>
+        <% } else { %>
+          <li>No questions have been asked yet.</li>
+        <% } %>
+      </ul>
+    </div>
+  </main>
 
-  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script src="/home.js"></script>
 </body>
 </html>

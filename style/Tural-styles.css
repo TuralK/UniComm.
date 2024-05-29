@@ -1,0 +1,203 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html{
+    height: 100%;
+    width: 100%;
+    margin: auto;
+}
+
+.profile-page-container{
+    width: 100%;
+    height: calc(100% - 56.5px);
+    padding: 10px 10px 10px 10px;
+    position: absolute;
+}
+
+.profile-info-container{
+    width: 100%;
+    height: 230px;
+    position: relative;
+    border: 1px solid black;
+    margin: 12px 0 12px 0;
+}
+
+.education-info-container{
+    width: 100%;
+    height: 230px;
+    position: relative;
+    border: 1px solid black;
+    margin: 12px 0 12px 0;
+}
+
+.comment-container{ 
+    width: 100%;
+    height: 150px;                                                                                                 
+    position: relative;
+    border: 1px solid black;
+    margin: 12px 0 12px 0;
+}
+
+.profile-info-container-top{
+    width: 100%;
+    height: 75%;
+    position: relative;
+}
+.profile-info-container-bottom{
+    width: 100%;
+    height: 25%;
+    position: relative;
+}
+
+button[type="edit-profile"]{
+    width: 130px;
+    height: 30px;
+    right: 160px;
+    background-color: black;  
+    color: white;
+    position: absolute;
+    transition: all 0.3s linear;
+}
+
+button[type="add-information"]{
+    width: 130px;
+    height: 30px;
+    right: 20px;
+    background-color: black;  
+    color: white;
+    position: absolute;
+    transition: all 0.3s linear;
+}
+
+button[type="add-education"]{
+    width: 130px;
+    height: 30px;
+    right: 20px;
+    background-color: black;  
+    color: white;
+    position: absolute;
+    transition: all 0.3s linear;
+}
+
+button[type="edit-profile"]:hover,
+button[type="add-education"]:hover,
+button[type="add-information"]:hover{
+    background-color: white;
+    color: black;
+    border-radius: 0;
+    scale: 1.1;
+}
+
+button[type="edit-profile"]::after,
+button[type="add-education"]::after,
+button[type="add-information"]::after{
+    content: '';
+    background: white;
+    width: 0;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: -1;
+}
+
+button[type="edit-profile"]:hover::after,
+button[type="add-education"]:hover::after,
+button[type="add-information"]:hover::after{
+    width: 100%;
+}
+
+.profile-picture-container{
+    height: 100%;
+    width: 15%;
+    position: absolute;
+}
+.profile-picture-container img{
+    width: 180px;
+    height: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 15px;
+    display: block;
+}
+
+.profile-userinfo-container{
+    height: 100%;
+    width: 85%;
+    right: 0;
+    position: absolute;
+    padding-top: 15px;
+}
+
+.profile-userinfo-container p{
+    margin-bottom: 5px;
+}
+
+.profile-userinfo-container p[name="name"]{
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.education-info-container-top{
+    width: 100%;
+    height: 75%;
+    position: relative;
+    padding-left: 2.55%;
+    padding-top: 15px;
+}
+.education-info-container-bottom{
+    width: 100%;
+    height: 25%;
+    position: relative;
+}
+
+.education-info-container-top p{
+    margin-bottom: 5px;
+}
+
+.all-education-information-container{
+    width: 100%;
+    height: 80%;
+    position: relative;
+}
+
+.education-information-1{
+    width: 20%;
+    height: 100%;
+    position: absolute;
+}
+
+.education-information-2{
+    width: 20%;
+    height: 100%;
+    left: 20%;
+    position: absolute;
+}
+
+.user-question{
+    width: 100%;
+    height: 40%;
+    padding: 10px 2.55% 10px 2.55%;
+}
+
+.user-question p[name=question]{
+    font-size: 32px;
+    color: #0cb8cf;
+    color: rgb(10, 139, 204);
+    text-decoration: none;
+}
+
+.comment-container:hover{
+    transition: all 0.2s ease;
+    box-shadow: 2px 2px black;
+}
+
+.question-info{
+    width: 100%;
+    height: 60%;
+    padding: 10px 2.55% 10px 2.55%;
+    color: black;
+}

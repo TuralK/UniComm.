@@ -77,6 +77,10 @@ img {
   text-align: center;
   font-size: var(--h1-font-size);
   font-weight: var(--font-medium);
+  transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.title:hover {
+  transform: scale(1.2);
 }
 .login__content, .login__box {
   display: grid;

@@ -3,44 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <link rel="stylesheet" href="/login-register-styles.css">
-  <title>Document</title>
-  <style>
-    .university{
-      font-size: 6px;
-      width: 250px;
-      height: 30px;
-    }
-  </style>
+  <title>UniComm</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="/home.css">
 </head>
 <body>
-  <nav>
-    <h4>Home Page</h4>
-    <ul>
-        <li><a href="/">Home</a></li>
+  <nav class="nav" id="topNav">
+    <div class="nav__container">
+      <a href="/" class="nav__logo">UniComm</a>
+      <ul class="nav__menu">
+        <li class="nav__item"><a href="/" class="nav__link">Home</a></li>
         <% if (user) { %>
           <% if (userType === 'student') { %>
-            <li><a href="/profile">Profile</a></li>
+            <li class="nav__item"><a href="/profile" class="nav__link">Profile</a></li>
           <% } else if (userType === 'admin') { %>
-            <li><a href="/admin/profile">Profile</a></li>
+            <li class="nav__item"><a href="/profile" class="nav__link">Profile</a></li>
+            <li class="nav__item"><a href="/displayFiles" class="nav__link">Registration Verification</a></li>
           <% } %>
-          <li><a href="/logout">Logout</a></li>
+          <li class="nav__item"><a href="/logout" class="nav__link">Logout</a></li>
         <% } else { %>  
-          <li><a href="/login">Login</a></li>
-          <li><a href="/register">Register</a></li>
+          <li class="nav__item"><a href="/login" class="nav__link">Login</a></li>
+          <li class="nav__item"><a href="/register" class="nav__link">Register</a></li>
         <% } %>
-    </ul>
+      </ul>
+    </div>
   </nav>
 
- 
-    <% universities.forEach(function(university) { %> 
-      <div class="university">
-        <a href="/university/<%= university.uni_id %>"><%= university.uni_name %></a>
+  <main class="main">
+    <div class="main__content">
+      <h1 class="main__title">Universities</h1>
+      <input type="text" id="search" class="search__input" placeholder="Search for a university...">
+      <div class="universities" id="university-list">
+        <% universities.forEach(function(university) { %> 
+          <div class="university" data-name="<%= university.uni_name.toLowerCase() %>">
+            <a href="/university/<%= university.uni_id %>" class="university__link"><%= university.uni_name %></a>
+          </div>
+        <% }); %>
       </div>
-    <% }); %>
+    </div>
+  </main>
 
-
-  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script src="/home.js"></script>
 </body>
 </html>

@@ -1,0 +1,90 @@
+.form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--box-border-color);
+    border-radius: 0.5rem;
+    background: none;
+    color: var(--text-color);
+    font-size: var(--normal-font-size);
+    transition: border-color 0.3s;
+  }
+
+  .form-control:focus {
+    border-color: var(--accent-color);
+    outline: none;
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: var(--normal-font-size);
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+  .btn-primary {
+    background-color: var(--accent-color);
+    color: var(--white-color);
+  }
+
+  .btn-success {
+    background-color: hsl(120, 70%, 60%); /* Green color for success button */
+    color: var(--white-color);
+  }
+
+  .btn:hover {
+    background-color: hsl(200, 70%, 50%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+
+  .questions-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .question-item {
+    border: 1px solid var(--box-border-color);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    background: var(--box-color);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .answers-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .answer-item {
+    border-top: 1px solid var(--box-border-color);
+    padding: 0.5rem 0;
+  }
+
+  .answer-item:first-child {
+    border-top: none;
+  }
+
+  /* Fade-in animation for questions and answers */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .questions-list, .answers-list {
+    animation: fadeIn 1s ease-in-out;
+  }
