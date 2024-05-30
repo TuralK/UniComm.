@@ -18,7 +18,8 @@ module.exports = async function (req, res, next){
         req.user = decodedToken;
         next();
     } catch (error) {
-        res.status(400).send("hatalı token");
+        //res.status(400).JSON({ message: "Session expired." });
+		res.redirect("/logout");
     }
     
 }
