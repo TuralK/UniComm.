@@ -17,8 +17,9 @@
       <h1 class="main__title">Universities</h1>
       <input type="text" id="search" class="search__input" placeholder="Search for a university...">
       <div class="universities" id="university-list">
-        <% universities.forEach(function(university) { %> 
-          <div class="university" data-name="<%= university.uni_name.toLowerCase() %>">
+        <% universities.forEach(function(university) { %>
+          <div class="university" data-name="<%= university.uni_name.toLowerCase() %>"> 
+            <img src="/placeholder.png" alt="<%= university.uni_name %> logo" class="logo_img" data-id="<%= university.uni_id %>">
             <a href="/university/<%= university.uni_id %>" class="university__link"><%= university.uni_name %></a>
           </div>
         <% }); %>
@@ -27,5 +28,21 @@
   </main>
 
   <script src="/home.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const logoImages = document.querySelectorAll('.logo_img');
+      logoImages.forEach(img => {
+        const uniId = img.getAttribute('data-id');
+        const tempImg = new Image();
+        tempImg.src = `/${uniId}.png`; // Assuming the images are in the /uni_logo directory
+
+        // Replace placeholder with actual image once loaded
+        tempImg.onload = () => {
+          img.src = tempImg.src;
+        };
+      });
+    });
+  </script>
 </body>
 </html>
+

@@ -13,6 +13,7 @@ app.use(express.static("helper scripts"));
 app.use(express.static("background_pictures"));
 app.use(express.static("uni_background"));
 app.use(express.static("profile_pictures"));
+app.use(express.static("uni_logo"));
 
 app.use(cookieParser());
 
