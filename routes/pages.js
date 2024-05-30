@@ -37,15 +37,22 @@ router.get('/', auth, async (req, res) => {
 
 
 //profile page for user
-router.get('/profile', auth, (req, res) => {
-  if (req.user) {
-    res.render('profile', {
-      user: req.user
-    });
-  } else {
-    res.redirect('/');
-  }
-});
+/*router.get('/profile', auth, (req, res) => {
+
+  	if (req.user.userType === "student") {
+    	res.render('student/profile', {
+    	  	user: req.user
+    	});
+	}
+	else if(req.user.userType === "admin") {
+		res.render('admin/profile', {
+			user: req.user
+	  	});
+	}
+   	else {
+   	 	res.redirect('/');
+  	}
+});*/
 
 //register page
 router.get("/register", async (req, res) => {
@@ -91,7 +98,7 @@ router.get("/displayFiles", [auth, checkUserRole("admin")], async (req, res) => 
 
     res.render("Admin/displayFiles", {
       user: admin.dataValues,
-      usertype: "admin",
+      userType: "admin",
       dataValues: admin.dataValues,
       studentFiles: uncheckedStudentFilesDataValues
     });

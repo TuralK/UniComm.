@@ -9,6 +9,9 @@ const Student_model= require("../models/student-model");
 const StudentFile_model= require("../models/studentFile-model");
 const Question_model = require("../models/question-model");
 const Answer_model = require("../models/answer-model");
+const University_model = require("../models/university-model");
+const Department_model = require("../models/department-model");
+const Faculty_model = require("../models/faculty-model");
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -124,3 +127,32 @@ exports.addAnswer = async (req, res) => {
     res.status(500).send("Error adding answer.");
   }
 };
+
+exports.getProfile = async (req,res) => {
+	const student = await Student_model.findOne({
+		where: {
+			id: req.user.id
+		},
+		include: [
+			{
+				model: Answer_model,
+				include: {
+					model: Question_model
+				}
+			},
+			{
+				model: University_model
+			},
+			{
+				model: Department_model
+			}
+		]
+	}) ;
+
+	console.log(student);
+
+	res.render('Student/profile', {
+		user: student.dataValues,
+        userType: "student" // Pass the userType
+	});
+}

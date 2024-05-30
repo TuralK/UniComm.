@@ -9,24 +9,9 @@
   <link rel="stylesheet" href="/universityDetails.css">
 </head>
 <body>
-  <nav class="nav">
-    <div class="nav__container">
-      <a href="/" class="nav__logo">UniComm</a>
-      <ul class="nav__menu">
-        <li class="nav__item"><a href="/" class="nav__link">Home</a></li>
-        <% if(user) { %>
-          <li class="nav__item"><a href="/profile" class="nav__link">Profile</a></li>
-          <% if(userType === 'admin') { %>
-            <li class="nav__item"><a href="/displayFiles" class="nav__link">Registration Verification</a></li>
-          <% } %>
-          <li class="nav__item"><a href="/logout" class="nav__link">Logout</a></li>
-        <% } else { %>  
-          <li class="nav__item"><a href="/login" class="nav__link">Login</a></li>
-          <li class="nav__item"><a href="/register" class="nav__link">Register</a></li>
-        <% } %>
-      </ul>
-    </div>
-  </nav>
+	<header>
+		<%- include('./nav') %>
+	</header>
 
   <main class="main">
     <div class="main__content">

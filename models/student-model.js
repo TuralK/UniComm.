@@ -22,7 +22,7 @@ const Student = sequelize.define('Student', {
         type: DataTypes.STRING(255),
         allowNull: false
     },
-    university_id: {
+    uni_id: {
         type: DataTypes.INTEGER,
         allowNull: false
     },

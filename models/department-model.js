@@ -1,8 +1,9 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../data/db');
+const Student = require('./student-model');
 
 const Department = sequelize.define('Department', {
-    bolum_id: {
+    department_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -27,5 +28,8 @@ const Department = sequelize.define('Department', {
     tableName: 'bolumler',
     timestamps: false,
 });
+
+Student.belongsTo(Department, { foreignKey: 'department_id' });
+Department.hasMany(Student, { foreignKey: 'department_id' });
 
 module.exports = Department;

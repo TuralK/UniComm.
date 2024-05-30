@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+	<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="/studentProfile.css">
+</head>
+<body>
+	<header>
+		<%- include('../nav')%>
+	</header>
+   
+    <div class="profile-container">
+        <h1>Profile</h1>
+        <div class="user-details">
+            <h2>user Details</h2>
+            <p><strong>Name:</strong> <%= user.username %></p>
+            <p><strong>Email:</strong> <%= user.email %></p>
+            <!-- Add more user details as required -->
+        </div>
+
+        <div class="university-details">
+            <h2>University Details</h2>
+            <p><strong>University:</strong> <%= user.University.uni_name %></p>
+            <p><strong>Department:</strong> <%= user.Department.bolum_ad %></p>
+        </div>
+
+        <div class="answers-details">
+            <h2>Answers</h2>
+            <% user.Answers.forEach(answer => { %>
+                <div class="answer">
+                    <h3>Question: <%= answer.Question.question_text %></h3>
+                    <p><strong>Answer:</strong> <%= answer.answer_text %></p>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+	<script src="/home.js"></script>
+
+</body>
+</html>
