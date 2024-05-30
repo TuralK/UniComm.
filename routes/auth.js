@@ -16,6 +16,7 @@ router.post('/askQuestion', auth, userController.askQuestion);
 router.post('/register', studentController.register);
 router.post('/answerQuestion', [auth, checkUserRole("student")], studentController.addAnswer);
 router.get('/profile', [auth, checkUserRole("student")], studentController.getProfile);
+router.post('/uploadProfilePicture', [auth, checkUserRole("student")], studentController.uploadProfilePicture);
 
 router.put('/admin/student/:studentId', adminController.updateStudentStatus);
 

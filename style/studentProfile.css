@@ -2,12 +2,146 @@
     margin: 100px;
 }
 
-.student-details, .university-details, .answers-details {
+.user-details-container {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 1rem;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(6px);
     margin-bottom: 20px;
+}
+
+.profile-picture {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+    border-radius: 50%;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.profile-picture:hover .overlay {
+    opacity: 1;
+}
+
+#uploadButton {
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+}
+
+#uploadButton i {
+    margin-right: 5px;
+}
+
+#confirmButton, #cancelButton {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#confirmButton {
+    background-color: #007BFF;
+}
+
+#confirmButton:hover {
+    background-color: #0056b3;
+}
+
+#cancelButton {
+    background-color: #dc3545;
+}
+
+#cancelButton:hover {
+    background-color: #bb2d3b;
+}
+
+.user-details {
+    flex: 1;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+form input[type="file"] {
+    margin-bottom: 10px;
+}
+
+form button {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+.university-details, .answers-details {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 1rem;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(6px);
+    margin-bottom: 20px;
+}
+
+.university-link {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+}
+
+.university-link:hover {
+    text-decoration: underline;
 }
 
 .answer {
     border: 1px solid #ddd;
     padding: 10px;
     margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 0.5rem;
 }
+

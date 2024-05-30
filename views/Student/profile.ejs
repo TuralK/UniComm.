@@ -4,41 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
-	<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="/studentProfile.css">
 </head>
 <body>
-	<header>
-		<%- include('../nav')%>
-	</header>
+    <header>
+        <%- include('../nav') %>
+    </header>
    
     <div class="profile-container">
         <h1>Profile</h1>
-        <div class="user-details">
-            <h2>user Details</h2>
-            <p><strong>Name:</strong> <%= user.username %></p>
-            <p><strong>Email:</strong> <%= user.email %></p>
-            <!-- Add more user details as required -->
+        <div class="user-details-container">
+            <div class="profile-picture" id="profilePictureContainer">
+                <img src="<%= profilePicture %>" alt="Profile Picture" id="profilePicture">
+                <div class="overlay" id="overlay">
+                    <label for="profilePictureInput" id="uploadButton">
+                        <i class="ri-camera-fill"></i> Upload Picture
+                    </label>
+                </div>
+            </div>
+            
+            <input type="file" id="profilePictureInput" name="profilePicture" style="display: none;">
+            <button id="confirmButton" style="display: none;">Confirm</button>
+            <button id="cancelButton" style="display: none;">Cancel</button>
+            <div class="user-details">
+                <h2>User Details</h2>
+                <p><strong>Name:</strong> <%= user.username %></p>
+                <p><strong>Email:</strong> <%= user.email %></p>
+                <!-- Add more user details as required -->
+            </div>
         </div>
 
         <div class="university-details">
             <h2>University Details</h2>
-            <p><strong>University:</strong> <%= user.University.uni_name %></p>
+            <p><strong>University:</strong> 
+                <a href="/university/<%= user.University.uni_id %>" class="university-link">
+                    <%= user.University.uni_name %>
+                </a>
+            </p>
             <p><strong>Department:</strong> <%= user.Department.bolum_ad %></p>
         </div>
 
         <div class="answers-details">
             <h2>Answers</h2>
-            <% user.Answers.forEach(answer => { %>
+            <% Object.keys(questionAnswersMap).forEach(question => { %>
                 <div class="answer">
-                    <h3>Question: <%= answer.Question.question_text %></h3>
-                    <p><strong>Answer:</strong> <%= answer.answer_text %></p>
+                    <h3>Question: <%= question %></h3>
+                    <% questionAnswersMap[question].forEach(answer => { %>
+                        <p><strong>Answer:</strong> <%= answer %></p>
+                    <% }) %>
                 </div>
             <% }) %>
         </div>
     </div>
 
-	<script src="/home.js"></script>
+    <script src="/home.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const profilePictureContainer = document.getElementById('profilePictureContainer');
+            const overlay = document.getElementById('overlay');
+            const profilePictureInput = document.getElementById('profilePictureInput');
+            const confirmButton = document.getElementById('confirmButton');
+            const cancelButton = document.getElementById('cancelButton');
 
+            profilePictureContainer.addEventListener('mouseenter', () => {
+                overlay.style.display = 'flex';
+            });
+
+            profilePictureContainer.addEventListener('mouseleave', () => {
+                overlay.style.display = 'none';
+            });
+
+            profilePictureInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('profilePicture').src = e.target.result;
+                        confirmButton.style.display = 'inline-block';
+                        cancelButton.style.display = 'inline-block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            confirmButton.addEventListener('click', () => {
+                const file = profilePictureInput.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('profilePicture', file);
+
+                    fetch('/uploadProfilePicture', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            console.error(data.error);
+                        } else {
+                            location.reload(); // Reload the page to show the new profile picture
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            });
+
+            cancelButton.addEventListener('click', () => {
+                location.reload(); // Reload the page to revert changes
+            });
+        });
+    </script>
 </body>
 </html>

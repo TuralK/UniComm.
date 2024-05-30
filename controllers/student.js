@@ -4,6 +4,8 @@ const multer = require("multer");
 const { isEmail } = require('validator');
 const auth = require("../middleware/auth");  //this auth turns yellow when I export it with a function name
 const checkUserRole= require("../middleware/checkUserRole");
+const path = require('path');
+const fs = require('fs');
 
 const Student_model= require("../models/student-model");
 const StudentFile_model= require("../models/studentFile-model");
@@ -12,6 +14,7 @@ const Answer_model = require("../models/answer-model");
 const University_model = require("../models/university-model");
 const Department_model = require("../models/department-model");
 const Faculty_model = require("../models/faculty-model");
+const { profile } = require('console');
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -25,6 +28,18 @@ const upload = multer({
     }
   }
 }).single('studentFile');
+
+const upload_picture = multer({
+	storage: storage,
+	fileFilter: (req, file, cb) => {
+	  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+	  if (allowedTypes.includes(file.mimetype)) {
+		cb(null, true);
+	  } else {
+		cb(new Error('Invalid file type'), false);
+	  }
+	}
+  }).single('profilePicture');
 
 const handleErrors = (err) => {
   console.log(err.message, err.code);
@@ -128,31 +143,103 @@ exports.addAnswer = async (req, res) => {
   }
 };
 
-exports.getProfile = async (req,res) => {
-	const student = await Student_model.findOne({
-		where: {
-			id: req.user.id
-		},
-		include: [
-			{
-				model: Answer_model,
-				include: {
-					model: Question_model
-				}
-			},
-			{
-				model: University_model
-			},
-			{
-				model: Department_model
-			}
-		]
-	}) ;
+exports.getProfile = async (req, res) => {
+    const student = await Student_model.findOne({
+        where: {
+            id: req.user.id
+        },
+        include: [
+            {
+                model: Answer_model,
+                include: {
+                    model: Question_model
+                }
+            },
+            {
+                model: University_model
+            },
+            {
+                model: Department_model
+            }
+        ]
+    });
 
-	console.log(student);
+    let profilePicture;
+    const possibleExtensions = ['png', 'jpg', 'jpeg']; // List of possible file extensions
 
-	res.render('Student/profile', {
-		user: student.dataValues,
-        userType: "student" // Pass the userType
-	});
+    // Iterate over possible extensions and check if the profile picture exists
+    for (const extension of possibleExtensions) {
+        const profilePicturePath = path.join(__dirname, '..', 'profile_pictures', `${student.id}.${extension}`);
+        if (fs.existsSync(profilePicturePath)) {
+            profilePicture = `/${student.id}.${extension}`;
+            break; // If profile picture found, exit loop
+        }
+    }
+
+    if (!profilePicture) {
+        // If no profile picture found, use the default profile picture
+        profilePicture = '/default_profile.png';
+    }
+
+    // Create questionAnswersMap to group answers by questions
+    const questionAnswersMap = student.Answers.reduce((acc, answer) => {
+        const questionText = answer.Question.question_text;
+        if (!acc[questionText]) {
+            acc[questionText] = [];
+        }
+        acc[questionText].push(answer.answer_text);
+        return acc;
+    }, {});
+
+    res.render('Student/profile', {
+        user: student.dataValues,
+        userType: "student", // Pass the userType
+        profilePicture,
+        questionAnswersMap // Pass the grouped answers map
+    });
+}
+
+exports.uploadProfilePicture = async (req, res) => {
+    upload_picture(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ error: err.message });
+        }
+
+        try {
+            // Find the student by ID
+            const student = await Student_model.findByPk(req.user.id);
+
+            if (!student) {
+                return res.status(404).json({ error: "Student not found" });
+            }
+
+            // Check if there's a file attached
+            if (!req.file) {
+                return res.status(400).json({ error: "No file attached" });
+            }
+
+            // Get the file extension of the uploaded file
+            const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
+
+            // Construct the path to save the profile picture with the correct file extension
+            const profilePicturePath = path.join(__dirname, '..', 'profile_pictures', `${student.id}.${fileExtension}`);
+
+            // Iterate over possible file extensions and delete the old profile picture if exists
+            const possibleExtensions = ['png', 'jpg', 'jpeg'];
+            possibleExtensions.forEach(ext => {
+                const oldProfilePicturePath = path.join(__dirname, '..', 'profile_pictures', `${student.id}.${ext}`);
+                if (fs.existsSync(oldProfilePicturePath)) {
+                    fs.unlinkSync(oldProfilePicturePath);
+                }
+            });
+
+            // Save the profile picture
+            fs.writeFileSync(profilePicturePath, req.file.buffer);
+
+            res.json({ message: "Profile picture uploaded successfully" });
+        } catch (error) {
+            console.error("Error uploading profile picture:", error);
+            res.status(500).json({ error: "Internal server error" });
+        }
+    });
 }

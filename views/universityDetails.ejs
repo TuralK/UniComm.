@@ -46,7 +46,7 @@
                   <li>No answers yet.</li>
                 <% } %>
               </ul>
-              <% if (user && userType === 'student' && user.university_id === university.uni_id) { %>
+              <% if (user && userType === 'student' && user.uni_id === university.uni_id) { %>
                 <form action="/answerQuestion" method="POST">
                   <input type="hidden" name="question_id" value="<%= question.question_id %>">
                   <div class="form-group">

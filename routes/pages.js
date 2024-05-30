@@ -187,7 +187,7 @@ router.get('/university/:id', auth, async (req, res) => {
         userType = 'admin';
       }
     }
-    
+
     res.render('universityDetails', {
       user: user,
       userType: userType,
