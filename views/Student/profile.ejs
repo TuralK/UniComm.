@@ -16,7 +16,7 @@
         <h1>Profile</h1>
         <div class="user-details-container">
             <div class="profile-picture" id="profilePictureContainer">
-                <img src="<%= profilePicture %>" alt="Profile Picture" id="profilePicture">
+                <img src="<%= user.profilePicture ? user.profilePicture : '/default_profile.png' %>" alt="Profile Picture" id="profilePicture">
                 <div class="overlay" id="overlay">
                     <label for="profilePictureInput" id="uploadButton">
                         <i class="ri-camera-fill"></i> Upload Picture
@@ -24,7 +24,7 @@
                 </div>
             </div>
             
-            <input type="file" id="profilePictureInput" name="profilePicture" style="display: none;">
+            <input type="file" id="profilePictureInput" name="profilePicture" accept="image/png, image/jpeg" style="display: none;">
             <button id="confirmButton" style="display: none;">Confirm</button>
             <button id="cancelButton" style="display: none;">Cancel</button>
             <div class="user-details">
@@ -78,6 +78,12 @@
             profilePictureInput.addEventListener('change', (event) => {
                 const file = event.target.files[0];
                 if (file) {
+                    const validTypes = ['image/jpeg', 'image/png'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Invalid file type. Please upload an image file (PNG, JPG, JPEG).');
+                        profilePictureInput.value = ''; // Reset the input
+                        return;
+                    }
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         document.getElementById('profilePicture').src = e.target.result;

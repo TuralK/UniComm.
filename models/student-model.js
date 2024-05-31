@@ -33,6 +33,10 @@ const Student = sequelize.define('Student', {
     approved: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+	profilePicture: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     tableName: 'student',

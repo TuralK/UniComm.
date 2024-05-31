@@ -8,6 +8,8 @@ const StudentFile_model = require("../models/studentFile-model");
 const University_model = require("../models/university-model");
 const Question_model = require("../models/question-model");
 const Answer_model = require('../models/answer-model');
+const University = require('../models/university-model');
+const Question = require('../models/question-model');
 
 const router = express.Router();
 
@@ -198,6 +200,43 @@ router.get('/university/:id', auth, async (req, res) => {
     console.error("Error fetching university details:", error);
     res.status(500).send("Error fetching university details.");
   }
+});
+
+router.get('/question/:id', auth, async (req, res) => {
+	const question = await Question_model.findByPk(req.params.id, {
+		include: [
+			{ 
+				model: Answer_model, 
+				include: [
+					Student_model
+				]
+			},
+			{
+				model: University_model
+			}
+		]
+	});
+
+	let user = null;
+    let userType = null;
+    if(req.user !== null){
+      if(req.user.userType === 'student'){
+        user = await Student_model.findByPk(req.user.id);
+        userType = 'student';
+      }
+      else if(req.user.userType === 'admin'){
+        user = await Admin_model.findByPk(req.user.id);
+        userType = 'admin';
+      }
+    }
+
+	res.render('questionDetails', { 
+		user,
+		userType,
+		question, 
+		answers: question.Answers, 
+		university: question.University,
+	});
 });
 
 module.exports = router;
