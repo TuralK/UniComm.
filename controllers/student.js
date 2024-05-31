@@ -124,7 +124,13 @@ exports.addAnswer = async (req, res) => {
     const { question_id, answer_text } = req.body;
     const student_id = req.user.id;
 
-    const question = await Question_model.findByPk(question_id);
+    const question = await Question_model.findByPk(question_id, {
+		include: [
+			{
+				model: University_model
+			}
+		]
+	});	
 
     if (!question) {
       return res.status(404).send('Question not found');
@@ -137,7 +143,7 @@ exports.addAnswer = async (req, res) => {
       created_at: new Date()
     });
 
-    res.redirect(`/university/${question.uni_id}`);
+    res.redirect(`/university/${question.University.uni_name.replace(/ /g, '-')}`);
   } catch (error) {
     console.error("Error adding answer:", error);
     res.status(500).send("Error adding answer.");

@@ -11,6 +11,7 @@ const { emit } = require("process");
 const Student_model= require("../models/student-model");
 const Admin_model= require("../models/admin-model");
 const Question_model = require("../models/question-model");
+const University_model = require("../models/university-model");
 
 async function findUserByEmail(email) {
 	let user = null;
@@ -112,7 +113,12 @@ exports.askQuestion = async (req, res) => {
       question_text,
       created_at: new Date()
     });
-    res.redirect(`/university/${uni_id}`);
+
+	const university = await University_model.findOne({
+		where : { uni_id }
+	});
+
+    res.redirect(`/university/${university.uni_name.replace(/ /g, '-')}`);
   } catch (error) {
     console.error("Error creating question:", error);
     res.status(500).send("Error creating question.");
