@@ -155,16 +155,21 @@ router.get('/serveFile/:id', [auth, checkUserRole("admin")], async (req, res) =>
 });
 
 //clicing university opens related university page
-router.get('/university/:id', auth, async (req, res) => {
+router.get('/university/:uni_name', auth, async (req, res) => {
   try {
-    const university = await University_model.findByPk(req.params.id);
+    const uniName = req.params.uni_name.replace(/-/g, ' ');
+
+    const university = await University_model.findOne({
+      where : {uni_name: uniName}
+    });
+    
     if (!university) {
       return res.status(404).send('University not found');
     }
 
     //const questions = await Question_model.findAll({ where: { uni_id: req.params.id } });
     const questions = await Question_model.findAll({
-      where: { uni_id: req.params.id },
+      where: { uni_id: university.uni_id },
       include: {
         model: Answer_model,
         include: {

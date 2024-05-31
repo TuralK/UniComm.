@@ -20,7 +20,7 @@
         <% universities.forEach(function(university) { %>
           <div class="university" data-name="<%= university.uni_name.toLowerCase() %>"> 
             <img src="/placeholder.png" alt="<%= university.uni_name %> logo" class="logo_img" data-id="<%= university.uni_id %>">
-            <a href="/university/<%= university.uni_id %>" class="university__link"><%= university.uni_name %></a>
+            <a href="/university/<%= university.uni_name.replace(/ /g, '-') %>" class="university__link"><%= university.uni_name %></a>
           </div>
         <% }); %>
       </div>
