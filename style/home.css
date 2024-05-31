@@ -143,3 +143,7 @@ img {
 .university {
   animation: fadeIn 1s ease-in-out;
 }
+
+.logo_img {
+	height: 100px;
+}
