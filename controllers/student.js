@@ -164,23 +164,6 @@ exports.getProfile = async (req, res) => {
         ]
     });
 
-    let profilePicture;
-    const possibleExtensions = ['png', 'jpg', 'jpeg']; // List of possible file extensions
-
-    // Iterate over possible extensions and check if the profile picture exists
-    for (const extension of possibleExtensions) {
-        const profilePicturePath = path.join(__dirname, '..', 'profile_pictures', `${student.id}.${extension}`);
-        if (fs.existsSync(profilePicturePath)) {
-            profilePicture = `/${student.id}.${extension}`;
-            break; // If profile picture found, exit loop
-        }
-    }
-
-    if (!profilePicture) {
-        // If no profile picture found, use the default profile picture
-        profilePicture = '/default_profile.png';
-    }
-
     // Create questionAnswersMap to group answers by questions
     const questionAnswersMap = student.Answers.reduce((acc, answer) => {
         const questionText = answer.Question.question_text;
@@ -194,7 +177,6 @@ exports.getProfile = async (req, res) => {
     res.render('Student/profile', {
         user: student.dataValues,
         userType: "student", // Pass the userType
-        profilePicture,
         questionAnswersMap // Pass the grouped answers map
     });
 }
@@ -222,19 +204,23 @@ exports.uploadProfilePicture = async (req, res) => {
             const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
 
             // Construct the path to save the profile picture with the correct file extension
-            const profilePicturePath = path.join(__dirname, '..', 'profile_pictures', `${student.id}.${fileExtension}`);
+            const profilePicturePath = `/profile_${student.id}.${fileExtension}`;
+			const profilePictureAbsolutePath = path.join(__dirname, '..', 'profile_pictures', `profile_${student.id}.${fileExtension}`);
 
             // Iterate over possible file extensions and delete the old profile picture if exists
             const possibleExtensions = ['png', 'jpg', 'jpeg'];
             possibleExtensions.forEach(ext => {
-                const oldProfilePicturePath = path.join(__dirname, '..', 'profile_pictures', `${student.id}.${ext}`);
+                const oldProfilePicturePath = 'profile_pictures/' + `profile_${student.id}.${ext}`;
                 if (fs.existsSync(oldProfilePicturePath)) {
                     fs.unlinkSync(oldProfilePicturePath);
                 }
             });
 
             // Save the profile picture
-            fs.writeFileSync(profilePicturePath, req.file.buffer);
+            fs.writeFileSync(profilePictureAbsolutePath, req.file.buffer);
+
+			student.profilePicture = profilePicturePath;
+            await student.save();
 
             res.json({ message: "Profile picture uploaded successfully" });
         } catch (error) {
