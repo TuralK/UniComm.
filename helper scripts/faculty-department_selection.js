@@ -25,7 +25,7 @@ document.getElementById('faculty').addEventListener('change', async function () 
     const departments = await response.json();
     departments.forEach(department => {
       const option = document.createElement('option');
-      option.value = department.bolum_id;
+      option.value = department.department_id;
       option.textContent = department.bolum_ad;
       departmentSelect.appendChild(option);
     });
