@@ -67,7 +67,8 @@ exports.register = (req, res) => {
       return res.status(400).json({ errors: { file: err.message } });
     }
 
-    const { username, email, password, university, department } = req.body;
+    const { username, email, password, university, faculty, department } = req.body;
+	console.log(req.body);
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const sequelize = require('../data/db'); // Adjust the path to your sequelize instance
@@ -90,7 +91,7 @@ exports.register = (req, res) => {
         username: username,
         email: email,
         password: hashedPassword,
-        university_id: university,
+        uni_id: university,
         department_id: department,
         approved: false
       }, { transaction });
@@ -123,7 +124,13 @@ exports.addAnswer = async (req, res) => {
     const { question_id, answer_text } = req.body;
     const student_id = req.user.id;
 
-    const question = await Question_model.findByPk(question_id);
+    const question = await Question_model.findByPk(question_id, {
+		include: [
+			{
+				model: University_model
+			}
+		]
+	});	
 
     if (!question) {
       return res.status(404).send('Question not found');
@@ -136,7 +143,7 @@ exports.addAnswer = async (req, res) => {
       created_at: new Date()
     });
 
-    res.redirect(`/university/${question.uni_id}`);
+    res.redirect(`/university/${question.University.uni_name.replace(/ /g, '-')}`);
   } catch (error) {
     console.error("Error adding answer:", error);
     res.status(500).send("Error adding answer.");

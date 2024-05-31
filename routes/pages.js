@@ -8,8 +8,8 @@ const StudentFile_model = require("../models/studentFile-model");
 const University_model = require("../models/university-model");
 const Question_model = require("../models/question-model");
 const Answer_model = require('../models/answer-model');
-const University = require('../models/university-model');
-const Question = require('../models/question-model');
+const Department_model = require('../models/department-model');
+
 
 const router = express.Router();
 
@@ -242,6 +242,52 @@ router.get('/question/:id', auth, async (req, res) => {
 		answers: question.Answers, 
 		university: question.University,
 	});
+});
+
+router.get('/profile/:username', auth, async (req, res) => {
+	try {
+		const username = req.params.username.replace(/-/g, ' ');
+
+		const student = await Student_model.findOne({
+			where: {
+				username
+			},
+			include: [
+				{
+					model: Answer_model,
+					include: {
+						model: Question_model
+					}
+				},
+				{
+					model: University_model
+				},
+				{
+					model: Department_model
+				}
+			]
+		});
+
+		const questionAnswersMap = student.Answers.reduce((acc, answer) => {
+			const questionText = answer.Question.question_text;
+			if (!acc[questionText]) {
+				acc[questionText] = [];
+			}
+			acc[questionText].push(answer.answer_text);
+			return acc;
+		}, {});
+	
+		res.render('Student/profile', {
+			user: student.dataValues,
+			userType: "student", // Pass the userType
+			questionAnswersMap // Pass the grouped answers map
+		});
+
+	}
+	catch (error) {
+		console.log("Error uploading profile picture:", error);
+        res.status(500).json({ error: "Internal server error" });
+	}
 });
 
 module.exports = router;
