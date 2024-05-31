@@ -55,7 +55,7 @@ img {
 /*====================================*/
 .register {
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
   display: grid;
   align-items: center;
 }
@@ -66,14 +66,16 @@ img {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  z-index: -1;
 }
 
 .register__form {
   position: relative;
   background-color: hsla(0, 0%, 10%, 0.1);
   border: 2px solid var(--white-color);
-  margin-inline: 1.5rem;
-  padding: 2.5rem 1.5rem;
+  margin-inline: auto;
+  padding: 5vw;
+  max-width: 600px;
   border-radius: 1rem;
   backdrop-filter: blur(16px);
 }
@@ -84,6 +86,7 @@ img {
   font-weight: var(--font-medium);
   transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
+
 .title:hover {
   transform: scale(1.2);
 }

@@ -68,7 +68,7 @@ exports.register = (req, res) => {
     }
 
     const { username, email, password, university, faculty, department } = req.body;
-	console.log(req.body);
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const sequelize = require('../data/db'); // Adjust the path to your sequelize instance
