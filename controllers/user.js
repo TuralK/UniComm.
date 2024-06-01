@@ -112,7 +112,7 @@ exports.askQuestion = async (req, res) => {
 		where : { uni_id }
 	});
 
-    res.redirect(`/university/${university.uni_name.replace(/ /g, '-')}`);
+    res.redirect(`/university/${university.uni_name.replace(/ /g, '_')}`);
   } catch (error) {
     console.error("Error creating question:", error);
     res.status(500).send("Error creating question.");
