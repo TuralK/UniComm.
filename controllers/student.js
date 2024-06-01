@@ -133,32 +133,26 @@ exports.register = (req, res) => {
 
       const normalizeText = text => text.replace(/\s+/g, ' ').trim();
       const normalizedText = normalizeText(extractedText);
-      //console.log('Normalized Text:', normalizedText);
 
       // Extract barcode
       const barcodeMatch = normalizedText.match(/^[A-Z0-9]+/m);
       const barcode = barcodeMatch ? barcodeMatch[0] : null;
-      console.log('Barcode:', barcode);
 
       // Extract T.C. Kimlik No
       const tcKimlikMatch = normalizedText.match(/(\d{11})\s*T\.C\. Kimlik No/);
       const tcKimlik = tcKimlikMatch ? tcKimlikMatch[1] : null;
-      console.log('T.C. Kimlik No:', tcKimlik);
 
       // Extract university name
       const universityMatch = normalizedText.match(/Program\s*([^\/]+)\/[^\/]+\/[^\/]+\//);
       const extractedUniversity = universityMatch ? universityMatch[1].trim() : null;
-      console.log('Extracted University:', extractedUniversity);
 
       // Extract faculty name
       const facultyMatch = normalizedText.match(/Program\s*[^\/]+\/([^\/]+)\/[^\/]+\//);
       const extractedFaculty = facultyMatch ? facultyMatch[1].trim() : null;
-      console.log('Extracted Faculty:', extractedFaculty);
 
       // Extract department name
       const departmentMatch = normalizedText.match(/Program\s*[^\/]+\/[^\/]+\/([^\/]+)\//);
       const extractedDepartment = departmentMatch ? departmentMatch[1].trim() : null;
-      console.log('Extracted Department:', extractedDepartment);
 
       const success = await verifyDocument(barcode, tcKimlik);
       if (
@@ -186,7 +180,6 @@ exports.register = (req, res) => {
         }
       }
       */
-
 
       // Create new student
       const newStudent = await Student_model.create({

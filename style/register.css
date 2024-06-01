@@ -107,11 +107,11 @@ img {
 }
 
 .register__icon,
-.register__eye {
+.eye {
   font-size: 1.25rem;
 }
 
-.register__eye {
+.eye {
   position: absolute;
   right: 0;
   top: 18px;
