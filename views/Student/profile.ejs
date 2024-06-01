@@ -21,7 +21,7 @@
         <%- include('../nav') %>
     </header>
    
-    <div class="profile-container">
+    <div class="profile-container" data-uni-id="<%= student.University.uni_id %>">
         <h1>Profile</h1>
         <div class="user-details-container">
             <div class="profile-picture" id="profilePictureContainer">
@@ -74,6 +74,7 @@
     </div>
 
     <script src="/home.js"></script>
+	<script src="/uni_background.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const profilePictureContainer = document.getElementById('profilePictureContainer');
