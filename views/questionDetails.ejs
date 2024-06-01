@@ -25,7 +25,7 @@
         <h2><%= question.question_text %></h2>
         <p>Asked on <%= question.created_at.toDateString() %></p>
 
-		<% if (user && userType === 'student' && user.uni_id === university.uni_id) { %>
+		<% if (userValues && user.userType === 'student' && userValues.uni_id === university.uni_id) { %>
 			<div class="submit-answer">
 			  <form action="/answerQuestion" method="POST">
 				<input type="hidden" name="question_id" value="<%= question.question_id %>">
@@ -82,7 +82,7 @@
           <% } %>
         </ul>
 
-        <% if (user && userType === 'student' && user.uni_id === university.uni_id) { %>
+        <% if (userValues && user.userType === 'student' && userValues.uni_id === university.uni_id) { %>
           <form action="/answerQuestion" method="POST">
             <input type="hidden" name="question_id" value="<%= question.question_id %>">
             <div class="form-group">

@@ -288,15 +288,10 @@ exports.getProfile = async (req, res) => {
         return acc;
     }, {});
 
-	const loggedInUser = {
-		id: req.user.id,
-		userType: req.user.userType
-	};
 
     res.render('Student/profile', {
-        user: student.dataValues,
-		loggedInUser,
-        userType: "student", // Pass the userType
+        user: req.user,
+        student: student.dataValues,
         questionAnswersMap // Pass the grouped answers map
     });
 }

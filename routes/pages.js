@@ -9,6 +9,7 @@ const University_model = require("../models/university-model");
 const Question_model = require("../models/question-model");
 const Answer_model = require('../models/answer-model');
 const Department_model = require('../models/department-model');
+const Department = require('../models/department-model');
 
 
 const router = express.Router();
@@ -22,13 +23,8 @@ router.get('/', auth, async (req, res) => {
     const universities = await University_model.findAll({ where: { status: 1 } });
     const universityDataValues = universities.map(university => university.dataValues);
 
-    let userType = null;
-    if(req.user !== null){
-      userType = req.user.userType;
-    }
     res.render('home', {
       user: req.user,
-      userType: userType,
       universities: universityDataValues
     });
   } catch(error){
@@ -99,8 +95,8 @@ router.get("/displayFiles", [auth, checkUserRole("admin")], async (req, res) => 
     const uncheckedStudentFilesDataValues = uncheckedStudentFiles.map(uncheckedStudentFile => uncheckedStudentFile.dataValues);
 
     res.render("Admin/displayFiles", {
-      user: admin.dataValues,
-      userType: "admin",
+      user: req.user,
+      admin: admin.dataValues,///checkk
       dataValues: admin.dataValues,
       studentFiles: uncheckedStudentFilesDataValues
     });
@@ -118,17 +114,32 @@ router.get('/file/:username', [auth, checkUserRole("admin")], async (req, res) =
       include: StudentFile_model
     });
 
+    //fakulte?
+    const department = await Department_model.findOne({
+      attributes: ['bolum_ad'],
+      where: { department_id: student.department_id },  
+      include: {
+        model: University_model,
+        attributes: ['uni_name'],
+        where: {
+          uni_id: student.uni_id
+        }
+      } 
+    });
+
     if (!student) {
       return res.status(404).send('Student not found');
     }
-
+    
     const file = student.StudentFiles[0];
     if (file) {
       res.render('Admin/fileContent',
         {
+          user: req.user,
           file,
-          username: req.params.username,
-          student: student.dataValues
+          student: student.dataValues,
+          uni_name: department.University.uni_name,
+          department_name: department.bolum_ad
         });
     } else {
       res.status(404).send('File not found');
@@ -182,22 +193,19 @@ router.get('/university/:uni_name', auth, async (req, res) => {
     });
     const questionsDataValues = questions.map(question => question.dataValues);
     
-    let user = null;
-    let userType = null;
+    let userValues = null;
     if(req.user !== null){
       if(req.user.userType === 'student'){
-        user = await Student_model.findByPk(req.user.id);
-        userType = 'student';
+        userValues = await Student_model.findByPk(req.user.id);
       }
       else if(req.user.userType === 'admin'){
-        user = await Admin_model.findByPk(req.user.id);
-        userType = 'admin';
+        userValues = await Admin_model.findByPk(req.user.id);
       }
     }
 
     res.render('universityDetails', {
-      user: user,
-      userType: userType,
+      user: req.user,
+      userValues: userValues,
       university: university.dataValues,
       questions: questionsDataValues
     });
@@ -222,22 +230,19 @@ router.get('/question/:id', auth, async (req, res) => {
 		]
 	});
 
-	let user = null;
-    let userType = null;
-    if(req.user !== null){
-      if(req.user.userType === 'student'){
-        user = await Student_model.findByPk(req.user.id);
-        userType = 'student';
-      }
-      else if(req.user.userType === 'admin'){
-        user = await Admin_model.findByPk(req.user.id);
-        userType = 'admin';
-      }
+	let userValues = null;
+  if(req.user !== null){
+    if(req.user.userType === 'student'){
+      userValues = await Student_model.findByPk(req.user.id);
     }
+    else if(req.user.userType === 'admin'){
+      userValues = await Admin_model.findByPk(req.user.id);
+    }
+  }
 
 	res.render('questionDetails', { 
-		user,
-		userType,
+		user: req.user,
+    userValues: userValues,
 		question, 
 		answers: question.Answers, 
 		university: question.University,
@@ -273,15 +278,11 @@ router.get('/profile/:id', auth, async (req, res) => {
 			return acc;
 		}, {});
 
-		const loggedInUser = {
-			id: req.user.id,
-			userType: req.user.userType
-		};
-	
+		
+    console.log(req.user);
 		res.render('Student/profile', { 
-			user: student.dataValues,
-			loggedInUser,
-			userType: "student", // Pass the userType
+			user: req.user,
+      student: student.dataValues,
 			questionAnswersMap // Pass the grouped answers map
 		});
 
