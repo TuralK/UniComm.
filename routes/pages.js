@@ -235,7 +235,7 @@ router.get('/question/:id', auth, async (req, res) => {
 
 	res.render('questionDetails', { 
 		user: req.user,
-    userValues: userValues,
+    	userValues: userValues,
 		question, 
 		answers: question.Answers, 
 		university: question.University,
