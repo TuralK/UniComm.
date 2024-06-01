@@ -102,7 +102,7 @@ exports.register = (req, res) => {
 
       // Validate password length
       if (password.length < 6) {
-        throw new Error('Minimum password length is 6');
+        throw new Error('Minimum password length');
       } 
       
       const University = await University_model.findOne({
@@ -133,32 +133,26 @@ exports.register = (req, res) => {
 
       const normalizeText = text => text.replace(/\s+/g, ' ').trim();
       const normalizedText = normalizeText(extractedText);
-      //console.log('Normalized Text:', normalizedText);
 
       // Extract barcode
       const barcodeMatch = normalizedText.match(/^[A-Z0-9]+/m);
       const barcode = barcodeMatch ? barcodeMatch[0] : null;
-      console.log('Barcode:', barcode);
 
       // Extract T.C. Kimlik No
       const tcKimlikMatch = normalizedText.match(/(\d{11})\s*T\.C\. Kimlik No/);
       const tcKimlik = tcKimlikMatch ? tcKimlikMatch[1] : null;
-      console.log('T.C. Kimlik No:', tcKimlik);
 
       // Extract university name
       const universityMatch = normalizedText.match(/Program\s*([^\/]+)\/[^\/]+\/[^\/]+\//);
       const extractedUniversity = universityMatch ? universityMatch[1].trim() : null;
-      console.log('Extracted University:', extractedUniversity);
 
       // Extract faculty name
       const facultyMatch = normalizedText.match(/Program\s*[^\/]+\/([^\/]+)\/[^\/]+\//);
       const extractedFaculty = facultyMatch ? facultyMatch[1].trim() : null;
-      console.log('Extracted Faculty:', extractedFaculty);
 
       // Extract department name
       const departmentMatch = normalizedText.match(/Program\s*[^\/]+\/[^\/]+\/([^\/]+)\//);
       const extractedDepartment = departmentMatch ? departmentMatch[1].trim() : null;
-      console.log('Extracted Department:', extractedDepartment);
 
       const success = await verifyDocument(barcode, tcKimlik);
       if (
@@ -196,7 +190,7 @@ exports.register = (req, res) => {
         uni_id: university,
         department_id: department,
         approved: isApproved
-      }, { transaction });
+      });
 
       // Create student file entry
       await StudentFile_model.create({
@@ -204,7 +198,7 @@ exports.register = (req, res) => {
         fileData: req.file.buffer,
         mimeType: req.file.mimetype,
         studentId: newStudent.id
-      }, { transaction });
+      });
 
       // Commit the transaction
       await transaction.commit();
@@ -221,14 +215,12 @@ exports.register = (req, res) => {
           httpOnly: true
         }
         res.cookie('jwt', token, cookieOptions);
+		return res.status(200).json({ message: "user added to database" })
       }
-      res.redirect("/");
+      res.status(200).json({ message: "registiration pending..." })
     } catch (error) {
-      // Rollback the transaction in case of error
-      await transaction.rollback();
-
-      const errors = handleErrors(error);
-      res.status(400).json({ errors });
+      	const errors = handleErrors(error);
+      	res.status(400).json({ errors });
     }
   });
 }

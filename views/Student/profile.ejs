@@ -23,7 +23,7 @@
         <div class="user-details-container">
             <div class="profile-picture" id="profilePictureContainer">
                 <img src="<%= user.profilePicture ? user.profilePicture : '/default_profile.png' %>" alt="Profile Picture" id="profilePicture">
-                <% if (user.id === loggedInUser.id) { %>
+				<% if (loggedInUser && user.id === loggedInUser.id) { %>
                     <div class="overlay" id="overlay">
                         <label for="profilePictureInput" id="uploadButton">
                             <i class="ri-camera-fill"></i> Upload Picture
@@ -33,7 +33,7 @@
             </div>
             
             <input type="file" id="profilePictureInput" name="profilePicture" accept="image/png, image/jpeg" style="display: none;">
-            <% if (user.id === loggedInUser.id) { %>
+            <% if (loggedInUser && user.id === loggedInUser.id) { %>
                 <button id="confirmButton" style="display: none;">Confirm</button>
                 <button id="cancelButton" style="display: none;">Cancel</button>
             <% } %>
