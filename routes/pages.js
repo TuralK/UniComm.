@@ -297,7 +297,7 @@ router.get('/profile/:id', auth, async (req, res) => {
 router.put('/:answerId/vote', async (req, res) => {
   const answerId = req.params.answerId;
   const idsCookie = req.cookies.ids;
-  let ids = [];
+  let ids = {};
 
   if (idsCookie) {
     ids = JSON.parse(idsCookie);
@@ -308,24 +308,33 @@ router.put('/:answerId/vote', async (req, res) => {
       throw new Error("There is no such answer!");
     }
 
-  if (ids.includes(answerId)) {
-    return res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
-  }
-
-  const vote = req.query.vote;
-  if (!vote || (vote !== 'like' && vote !== 'dislike')) {
-    return res.status(400).send('Invalid vote type');
-  }
-
-    if (vote === 'like') {
-      await answer.increment('likes');
-    } else if (vote === 'dislike') {
-      await answer.increment('dislikes');
+    const vote = req.query.vote;
+    if (!vote || (vote !== 'like' && vote !== 'dislike')) {
+      return res.status(400).send('Invalid vote type');
     }
 
+    if (ids[answerId]) {
+      if ((vote === 'like' && ids[answerId]== 'like') || (vote === 'dislike' && ids[answerId]== 'dislike')  );
+      else if (vote === 'dislike' && ids[answerId]== 'like') {
+        await answer.increment('dislikes');
+        await answer.decrement('likes');
+      }
+      else if (vote === 'like' && ids[answerId]== 'dislike') {
+        await answer.decrement('dislikes');
+        await answer.increment('likes');
+      }
+     
+    }
+    else{
+      if (vote === 'like') {
+        await answer.increment('likes');
+      } else if (vote === 'dislike') {
+        await answer.increment('dislikes');
+      }
+    }
     await answer.reload(); // Ensure latest values are returned
+    ids[answerId] = vote; // Store the answer ID and vote type in the cookie
 
-    ids.push(answerId); // Add the answer ID to the cookie
     res.cookie('ids', JSON.stringify(ids), { maxAge: 24 * 60 * 60 * 1000 }); // Update cookie
     res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
   } catch (error) {
@@ -333,5 +342,5 @@ router.put('/:answerId/vote', async (req, res) => {
     res.status(500).send("Error recording vote.");
   }
 });
-
+ 
 module.exports = router;
