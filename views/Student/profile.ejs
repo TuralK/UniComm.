@@ -48,7 +48,7 @@
         <div class="university-details">
             <h2>University Details</h2>
             <p><strong>University:</strong> 
-                <a href="/university/<%= student.University.uni_name.replace(/ /g, '-') %>" class="university-link">
+                <a href="/university/<%= student.University.uni_name.replace(/ /g, '_') %>" class="university-link">
                     <%= student.University.uni_name %>
                 </a>
             </p>

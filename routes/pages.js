@@ -78,12 +78,8 @@ router.get("/login", auth,(req, res) => {
 
 
 //admin's page, where he/she can see all requests
-//////////////////////////////////////////// check again(sending values to displayFiles) ////////////////////////////
-//////////////////////////////////////////// uncheckedStudentFiles can be null check again //////////////////////////
-//////////////////////////////////////////// unchecked student files include right students???///////////////////////
 router.get("/displayFiles", [auth, checkUserRole("admin")], async (req, res) => {
   try {
-    let admin = await Admin_model.findOne({ where: { id: req.user.id }, attributes: { exclude: ['password'] } });
     const uncheckedStudentFiles = await StudentFile_model.findAll({
       include: {
         model: Student_model,
@@ -96,8 +92,6 @@ router.get("/displayFiles", [auth, checkUserRole("admin")], async (req, res) => 
 
     res.render("Admin/displayFiles", {
       user: req.user,
-      admin: admin.dataValues,///checkk
-      dataValues: admin.dataValues,
       studentFiles: uncheckedStudentFilesDataValues
     });
   } catch (error) {
@@ -170,8 +164,7 @@ router.get('/serveFile/:id', [auth, checkUserRole("admin")], async (req, res) =>
 //clicing university opens related university page
 router.get('/university/:uni_name', auth, async (req, res) => {
   try {
-    const uniName = req.params.uni_name.replace(/-/g, ' ');
-
+    const uniName = req.params.uni_name.replace(/_/g, ' '); 
     const university = await University_model.findOne({
       where : {uni_name: uniName}
     });
@@ -278,6 +271,7 @@ router.get('/profile/:id', auth, async (req, res) => {
 			return acc;
 		}, {});
 
+		
 		res.render('Student/profile', { 
 			user: req.user,
       		student: student.dataValues,
@@ -287,36 +281,49 @@ router.get('/profile/:id', auth, async (req, res) => {
 	}
 	catch (error) {
 		console.log("Error uploading profile picture:", error);
-        res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
 	}
 });
 
 
 router.put('/:answerId/vote', async (req, res) => {
-    const vote = req.query.vote;
-  
-    if (!vote || (vote !== 'like' && vote !== 'dislike')) {
-        return res.status(400).send('Invalid vote type');
+  const answerId = req.params.answerId;
+  const idsCookie = req.cookies.ids;
+  let ids = [];
+
+  if (idsCookie) {
+    ids = JSON.parse(idsCookie);
+  }
+  try {
+    const answer = await Answer_model.findByPk(answerId);
+    if (!answer) {
+      throw new Error("There is no such answer!");
     }
 
-    try {
-        const answer = await Answer_model.findByPk(req.params.answerId);
-        if (!answer) {
-            throw new Error("There is no such answer!");
-        }
+  if (ids.includes(answerId)) {
+    return res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
+  }
 
-        if (vote === 'like') {
-            await answer.increment('likes');
-        } else if (vote === 'dislike') {
-            await answer.increment('dislikes');
-        }
+  const vote = req.query.vote;
+  if (!vote || (vote !== 'like' && vote !== 'dislike')) {
+    return res.status(400).send('Invalid vote type');
+  }
 
-        await answer.reload(); // Ensure latest values are returned
-        res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
-    } catch (error) {
-        console.error("Error recording vote:", error);
-        res.status(500).send("Error recording vote.");
+    if (vote === 'like') {
+      await answer.increment('likes');
+    } else if (vote === 'dislike') {
+      await answer.increment('dislikes');
     }
+
+    await answer.reload(); // Ensure latest values are returned
+
+    ids.push(answerId); // Add the answer ID to the cookie
+    res.cookie('ids', JSON.stringify(ids), { maxAge: 24 * 60 * 60 * 1000 }); // Update cookie
+    res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
+  } catch (error) {
+    console.error("Error recording vote:", error);
+    res.status(500).send("Error recording vote.");
+  }
 });
 
 module.exports = router;
