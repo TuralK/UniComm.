@@ -7,6 +7,11 @@
   <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
   <link rel="stylesheet" href="/home.css">
   <link rel="stylesheet" href="/universityDetails.css">
+  <style>
+    body{
+		  background-image: url('/<%= university.uni_id %>.jpg');
+	  }
+  </style>
 </head>
 <body>
   <header>
@@ -48,7 +53,7 @@
   </main>
 
   <script src="/home.js"></script>
-  <script src="/uni_background.js"></script>
+  
   <script>
     const logoImages = document.querySelector('.logo_img');
     const uniId = logoImages.getAttribute('data-id');

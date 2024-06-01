@@ -7,6 +7,11 @@
   <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
   <link rel="stylesheet" href="/home.css">
   <link rel="stylesheet" href="/questionDetails.css">
+  <style>
+	body{
+		background-image: url('/<%= university.uni_id %>.jpg');
+	}
+  </style>
 </head>
 <body>
   <header>
@@ -55,9 +60,9 @@
 						<p><%= answer.answer_text %> (Answered on <%= answer.created_at.toDateString() %>)</p>
 						<div class="voting" data-answer-id="<%= answer.answer_id %>">
 							<button class="btn like-button">Like <i class="ri-thumb-up-line"></i></button>
-							<span class="like-count"><%= answer.likes %></span>
-							<button class="btn dislike-button">Dislike <i class="ri-thumb-down-line"></i></button>
-							<span class="dislike-count"><%= answer.dislikes %></span>
+							<span class="like-count" style="padding-left: 1px; padding-right: 4px; "> <%= answer.likes %> </span>
+							<button class="btn dislike-button" style="border: 2px;">Dislike <i class="ri-thumb-down-line"></i></button>
+							<span class="dislike-count" style="padding-left: 1px; padding-right: 2px;"><%= answer.dislikes %></span>
 						</div>
 					</li>
 				<% }) %>
@@ -70,7 +75,6 @@
   </main>
 
   <script src="/home.js"></script>
-  <script src="/question_background.js"></script>
   <script src="/like-dislike.js"></script>
   <script src="/uni_background.js"></script>
 </body>
