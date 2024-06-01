@@ -19,9 +19,9 @@
       <input type="text" id="search" class="search__input" placeholder="Search for a university...">
       <div class="universities" id="university-list">
         <% universities.forEach(function(university) { %>
-          <div class="university" data-name="<%= university.uni_name.toLowerCase() %>" data-url="/university/<%= university.uni_name.replace(/ /g, '-') %>"> 
+          <div class="university" data-name="<%= university.uni_name.toLowerCase() %>" data-url="/university/<%= university.uni_name.replace(/ /g, '_') %>"> 
             <img src="/placeholder.png" alt="<%= university.uni_name %> logo" class="logo_img" data-id="<%= university.uni_id %>">
-            <a href="/university/<%= university.uni_name.replace(/ /g, '-') %>" class="university__link"><%= university.uni_name %></a>
+            <a href="/university/<%= university.uni_name.replace(/ /g, '_') %>" class="university__link"><%= university.uni_name %></a>
           </div>
         <% }); %>
       </div>

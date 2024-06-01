@@ -78,12 +78,8 @@ router.get("/login", auth,(req, res) => {
 
 
 //admin's page, where he/she can see all requests
-//////////////////////////////////////////// check again(sending values to displayFiles) ////////////////////////////
-//////////////////////////////////////////// uncheckedStudentFiles can be null check again //////////////////////////
-//////////////////////////////////////////// unchecked student files include right students???///////////////////////
 router.get("/displayFiles", [auth, checkUserRole("admin")], async (req, res) => {
   try {
-    let admin = await Admin_model.findOne({ where: { id: req.user.id }, attributes: { exclude: ['password'] } });
     const uncheckedStudentFiles = await StudentFile_model.findAll({
       include: {
         model: Student_model,
@@ -96,8 +92,6 @@ router.get("/displayFiles", [auth, checkUserRole("admin")], async (req, res) => 
 
     res.render("Admin/displayFiles", {
       user: req.user,
-      admin: admin.dataValues,///checkk
-      dataValues: admin.dataValues,
       studentFiles: uncheckedStudentFilesDataValues
     });
   } catch (error) {
@@ -170,8 +164,7 @@ router.get('/serveFile/:id', [auth, checkUserRole("admin")], async (req, res) =>
 //clicing university opens related university page
 router.get('/university/:uni_name', auth, async (req, res) => {
   try {
-    const uniName = req.params.uni_name.replace(/-/g, ' ');
-
+    const uniName = req.params.uni_name.replace(/_/g, ' '); 
     const university = await University_model.findOne({
       where : {uni_name: uniName}
     });
@@ -279,17 +272,16 @@ router.get('/profile/:id', auth, async (req, res) => {
 		}, {});
 
 		
-    console.log(req.user);
 		res.render('Student/profile', { 
 			user: req.user,
-      student: student.dataValues,
+      		student: student.dataValues,
 			questionAnswersMap // Pass the grouped answers map
 		});
 
 	}
 	catch (error) {
 		console.log("Error uploading profile picture:", error);
-        res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
 	}
 });
 
