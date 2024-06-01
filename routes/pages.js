@@ -244,14 +244,10 @@ router.get('/question/:id', auth, async (req, res) => {
 	});
 });
 
-router.get('/profile/:username', auth, async (req, res) => {
+router.get('/profile/:id', auth, async (req, res) => {
 	try {
-		const username = req.params.username.replace(/-/g, ' ');
 
-		const student = await Student_model.findOne({
-			where: {
-				username
-			},
+		const student = await Student_model.findByPk(req.params.id, {
 			include: [
 				{
 					model: Answer_model,
@@ -276,9 +272,15 @@ router.get('/profile/:username', auth, async (req, res) => {
 			acc[questionText].push(answer.answer_text);
 			return acc;
 		}, {});
+
+		const loggedInUser = {
+			id: req.user.id,
+			userType: req.user.userType
+		};
 	
 		res.render('Student/profile', {
 			user: student.dataValues,
+			loggedInUser,
 			userType: "student", // Pass the userType
 			questionAnswersMap // Pass the grouped answers map
 		});

@@ -145,3 +145,7 @@ form button:hover {
     border-radius: 0.5rem;
 }
 
+.question-text {
+    text-decoration: underline;
+    cursor: pointer;
+}
