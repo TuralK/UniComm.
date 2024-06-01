@@ -255,45 +255,6 @@ exports.addAnswer = async (req, res) => {
   }
 };
 
-exports.getProfile = async (req, res) => {
-    const student = await Student_model.findOne({
-        where: {
-            id: req.user.id
-        },
-        include: [
-            {
-                model: Answer_model,
-                include: {
-                    model: Question_model
-                }
-            },
-            {
-                model: University_model
-            },
-            {
-                model: Department_model
-            }
-        ]
-    });
-
-    // Create questionAnswersMap to group answers by questions
-    const questionAnswersMap = student.Answers.reduce((acc, answer) => {
-        const questionText = answer.Question.question_text;
-        if (!acc[questionText]) {
-            acc[questionText] = [];
-        }
-        acc[questionText].push(answer.answer_text);
-        return acc;
-    }, {});
-
-
-    res.render('Student/profile', {
-        user: req.user,
-        student: student.dataValues,
-        questionAnswersMap // Pass the grouped answers map
-    });
-}
-
 exports.uploadProfilePicture = async (req, res) => {
     upload_picture(req, res, async (err) => {
         if (err) {

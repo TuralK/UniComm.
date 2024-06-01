@@ -9,7 +9,7 @@
         <li class="nav__item"><a href="/" class="nav__link">Home</a></li>
         <% if (user) { %>
           <% if (user.userType === 'student') { %>
-            <li class="nav__item"><a href="/profile" class="nav__link">Profile</a></li>
+            <li class="nav__item"><a href="/profile/<%= user.id %>" class="nav__link">Profile</a></li>
           <% } else if (user.userType === 'admin') { %>
             <li class="nav__item"><a href="/displayFiles" class="nav__link">Registration Verification</a></li>
           <% } %>
