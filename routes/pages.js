@@ -277,7 +277,7 @@ router.get('/profile/:username', auth, async (req, res) => {
 			return acc;
 		}, {});
 	
-		res.render('Student/profile', {
+		res.render('Student/profile', { 
 			user: student.dataValues,
 			userType: "student", // Pass the userType
 			questionAnswersMap // Pass the grouped answers map
@@ -288,6 +288,36 @@ router.get('/profile/:username', auth, async (req, res) => {
 		console.log("Error uploading profile picture:", error);
         res.status(500).json({ error: "Internal server error" });
 	}
+});
+
+
+router.put('/:answerId/vote', async (req, res) => {
+  const vote = req.query.vote;
+  console.log(vote);
+  
+  if (!vote || (vote !== 'like' && vote !== 'dislike')) {
+    return res.status(400).send('Invalid vote type');
+  }
+
+  try {
+    const answer = await Answer_model.findByPk(req.params.answerId);
+    
+    if (!answer) {
+      throw new Error("There is no such answer!");
+    }
+
+    // Use Sequelize's increment method for atomic database update
+    if (vote === 'like') {
+      await answer.increment('likes');
+    } else if (vote === 'dislike') {
+      await answer.increment('dislikes');
+    }
+
+    res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes});
+  } catch (error) {
+    console.error("Error recording vote:", error);
+    res.status(500).send("Error recording vote.");
+  }
 });
 
 module.exports = router;

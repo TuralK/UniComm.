@@ -35,6 +35,14 @@
                   <%= answer.Student.username %>
                 </a>
                 <p><%= answer.answer_text %> (Answered on <%= answer.created_at.toDateString() %>)</p>
+                <div class="vote" data-id="<%= answer.answer_id %>"> 
+                <button class="btn btn-success" onclick="sendVote('like', <%= answer.answer_id %> )">Like </button>
+                <button class="btn btn-secondary" onclick="sendVote('dislike', <%= answer.answer_id %>)">Dislike</button>
+                </div>
+                <div>
+                  Likes <input type="text" disabled value="">
+                  Dislikes <input type="text" disabled value="">
+                </div>
               </li>
             <% }) %>
           <% } else { %>
@@ -57,5 +65,6 @@
 
   <script src="/home.js"></script>
   <script src="/question_background.js"></script>
+  <script src="/like-dislike.js"></script>
 </body>
 </html>
