@@ -12,7 +12,6 @@
   <header>
     <%- include('./nav') %>
   </header>
-
   <main class="main">
     <div class="main__content">
       <h1 class="main__title">Universities</h1>
@@ -51,6 +50,9 @@
         });
       });
     });
+
+    const randomImageNumber = Math.floor(Math.random() * 12) + 1;
+    document.body.style.backgroundImage = `url('/${randomImageNumber}.jpg')`;
   </script>
 </body>
 </html>
