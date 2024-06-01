@@ -12,7 +12,7 @@
 <body>
     <div class="register">
         <img src="" alt="register image" class="register__img" id="randomImage">
-        <form action="/register" method="POST" enctype="multipart/form-data" class="register__form">
+        <form action="/register" method="POST" enctype="multipart/form-data" class="register__form" id = "register__form">
             <a href="/" style="color: white;"><h1 class="register__title title" style="font-size: 38px; font-weight: bold;">UniComm</h1></a>
             <h2 class="register__title">Register</h2>
 
@@ -24,6 +24,8 @@
                         <label for="register-email" class="register__label">Email</label>
                     </div>
                 </div>
+				<div class="duplicate error"></div>
+				<div class="email error"></div>
 
                 <div class="register__box">
                     <i class="ri-user-3-line register_icon"></i>
@@ -41,6 +43,7 @@
                       <i class="ri-eye-off-line eye" id="eye"></i>
                     </div>
                 </div>
+				<div class="password error"></div>
 
                 <div class="register__box">
                     <i class="ri-book-line register__icon"></i>
@@ -93,6 +96,7 @@
     <script src="/random_picture.js"></script>
     <script src="/faculty-department_selection.js"></script>
     <script src="/pdf_checker.js"></script>
+	<script src="/signup_error.js"></script>
     <script src="/password_visibility.js"></script>
 </body>
 </html>

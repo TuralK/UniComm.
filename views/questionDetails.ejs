@@ -40,23 +40,29 @@
         <h3>Answers</h3>
         <ul class="answers-list">
 			<% if (answers && answers.length) { %>
-			  <% answers.forEach(answer => { %>
-				<li class="answer-item">
-				  <div class="profile-info">
-					<a href="/profile/<%= answer.Student.id %>" class="profile-link">
-					  <img src="<%= answer.Student.profilePicture ? answer.Student.profilePicture : '/default_profile.png' %>" alt="<%= answer.Student.username %>'s Profile Picture" class="profile-picture">
-					</a>
-					<div class="profile-name">
-					  <a href="/profile/<%= answer.Student.id %>" class="profile-link">
-						<%= answer.Student.username %>
-					  </a>
-					</div>
-				  </div>
-				  <p><%= answer.answer_text %> (Answered on <%= answer.created_at.toDateString() %>)</p>
-				</li>
-			  <% }) %>
+				<% answers.forEach(answer => { %>
+					<li class="answer-item">
+						<div class="profile-info">
+							<a href="/profile/<%= answer.Student.id %>" class="profile-link">
+								<img src="<%= answer.Student.profilePicture ? answer.Student.profilePicture : '/default_profile.png' %>" alt="<%= answer.Student.username %>'s Profile Picture" class="profile-picture">
+							</a>
+							<div class="profile-name">
+								<a href="/profile/<%= answer.Student.id %>" class="profile-link">
+									<%= answer.Student.username %>
+								</a>
+							</div>
+						</div>
+						<p><%= answer.answer_text %> (Answered on <%= answer.created_at.toDateString() %>)</p>
+						<div class="voting" data-answer-id="<%= answer.answer_id %>">
+							<button class="btn like-button">Like <i class="ri-thumb-up-line"></i></button>
+							<span class="like-count"><%= answer.likes %></span>
+							<button class="btn dislike-button">Dislike <i class="ri-thumb-down-line"></i></button>
+							<span class="dislike-count"><%= answer.dislikes %></span>
+						</div>
+					</li>
+				<% }) %>
 			<% } else { %>
-			  <li>No answers yet.</li>
+				<li>No answers yet.</li>
 			<% } %>
 		  </ul>
           <% if (answers && answers.length) { %>

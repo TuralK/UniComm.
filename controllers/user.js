@@ -28,12 +28,6 @@ async function findUserByEmail(email) {
 
 	if(user) return { user, userType };
 
-  /*let user = await Admin_model.findOne({ where: { email } });
-  if (user) return { user , userType: 'admin' };
-
-  user = await Student_model.findOne({ where: { email } });
-  if (user) return { user , userType: 'student' };*/
-
   return null;
 }
 

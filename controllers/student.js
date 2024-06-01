@@ -102,8 +102,18 @@ exports.register = (req, res) => {
 
       // Validate password length
       if (password.length < 6) {
-        throw new Error('Minimum password length is 6');
+        throw new Error('Minimum password length');
       } 
+
+	  // Create new student
+      const newStudent = await Student_model.create({
+        username: username,
+        email: email,
+        password: hashedPassword,
+        uni_id: university,
+        department_id: department,
+        approved: isApproved
+      });
       
       const University = await University_model.findOne({
         attributes: ['uni_name'],
@@ -181,23 +191,13 @@ exports.register = (req, res) => {
       }
       */
 
-      // Create new student
-      const newStudent = await Student_model.create({
-        username: username,
-        email: email,
-        password: hashedPassword,
-        uni_id: university,
-        department_id: department,
-        approved: isApproved
-      }, { transaction });
-
       // Create student file entry
       await StudentFile_model.create({
         fileName: req.file.originalname,
         fileData: req.file.buffer,
         mimeType: req.file.mimetype,
         studentId: newStudent.id
-      }, { transaction });
+      });
 
       // Commit the transaction
       await transaction.commit();
@@ -214,14 +214,12 @@ exports.register = (req, res) => {
           httpOnly: true
         }
         res.cookie('jwt', token, cookieOptions);
+		return res.status(200).json({ message: "user added to database" })
       }
-      res.redirect("/");
+      res.status(200).json({ message: "registiration pending..." })
     } catch (error) {
-      // Rollback the transaction in case of error
-      await transaction.rollback();
-
-      const errors = handleErrors(error);
-      res.status(400).json({ errors });
+      	const errors = handleErrors(error);
+      	res.status(400).json({ errors });
     }
   });
 }
