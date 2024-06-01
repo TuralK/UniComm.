@@ -278,11 +278,9 @@ router.get('/profile/:id', auth, async (req, res) => {
 			return acc;
 		}, {});
 
-		
-    console.log(req.user);
 		res.render('Student/profile', { 
 			user: req.user,
-      student: student.dataValues,
+      		student: student.dataValues,
 			questionAnswersMap // Pass the grouped answers map
 		});
 
