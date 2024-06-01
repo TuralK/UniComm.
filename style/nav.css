@@ -40,7 +40,6 @@ button {
 body {
   color: var(--text-color);
   background-color: var(--secondary-color);
-  background-image: url('/10.jpg'); /* Updated background image */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
