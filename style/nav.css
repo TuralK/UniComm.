@@ -65,7 +65,7 @@ img {
 /* Navigation bar with extraordinary animations */
 .nav {
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.85);
     padding: 1rem 2rem;
     position: fixed;
     top: 0;
@@ -76,7 +76,7 @@ img {
 .nav.scrolled {
   height: 60px;
   padding: 0.5rem 2rem;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.85);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
