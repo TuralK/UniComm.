@@ -295,30 +295,43 @@ router.get('/profile/:id', auth, async (req, res) => {
 
 
 router.put('/:answerId/vote', async (req, res) => {
-    const vote = req.query.vote;
-  
-    if (!vote || (vote !== 'like' && vote !== 'dislike')) {
-        return res.status(400).send('Invalid vote type');
+  const answerId = req.params.answerId;
+  const idsCookie = req.cookies.ids;
+  let ids = [];
+
+  if (idsCookie) {
+    ids = JSON.parse(idsCookie);
+  }
+  try {
+    const answer = await Answer_model.findByPk(answerId);
+    if (!answer) {
+      throw new Error("There is no such answer!");
     }
 
-    try {
-        const answer = await Answer_model.findByPk(req.params.answerId);
-        if (!answer) {
-            throw new Error("There is no such answer!");
-        }
+  if (ids.includes(answerId)) {
+    return res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
+  }
 
-        if (vote === 'like') {
-            await answer.increment('likes');
-        } else if (vote === 'dislike') {
-            await answer.increment('dislikes');
-        }
+  const vote = req.query.vote;
+  if (!vote || (vote !== 'like' && vote !== 'dislike')) {
+    return res.status(400).send('Invalid vote type');
+  }
 
-        await answer.reload(); // Ensure latest values are returned
-        res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
-    } catch (error) {
-        console.error("Error recording vote:", error);
-        res.status(500).send("Error recording vote.");
+    if (vote === 'like') {
+      await answer.increment('likes');
+    } else if (vote === 'dislike') {
+      await answer.increment('dislikes');
     }
+
+    await answer.reload(); // Ensure latest values are returned
+
+    ids.push(answerId); // Add the answer ID to the cookie
+    res.cookie('ids', JSON.stringify(ids), { maxAge: 24 * 60 * 60 * 1000 }); // Update cookie
+    res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
+  } catch (error) {
+    console.error("Error recording vote:", error);
+    res.status(500).send("Error recording vote.");
+  }
 });
 
 module.exports = router;

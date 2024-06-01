@@ -38,10 +38,5 @@ function sendVote(vote, answerId, div) {
     .catch(error => {
         console.error('Error recording vote:', error);
         // Handle error, revert optimistic update if needed
-        if (vote === 'like') {
-            likeCount.textContent = parseInt(likeCount.textContent) - 1;
-        } else if (vote === 'dislike') {
-            dislikeCount.textContent = parseInt(dislikeCount.textContent) - 1;
-        }
     });
 }
