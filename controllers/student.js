@@ -181,7 +181,6 @@ exports.register = (req, res) => {
       }
       */
 
-
       // Create new student
       const newStudent = await Student_model.create({
         username: username,
