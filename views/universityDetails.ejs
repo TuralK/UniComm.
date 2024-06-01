@@ -15,6 +15,7 @@
 
   <main class="main">
     <div class="main__content">
+      <img src="" alt="<%= university.uni_name %> logo" class="logo_img" id="logoImage" data-id="<%= university.uni_id %>">
       <h1 class="main__title"><%= university.uni_name %></h1>
       
       <!-- Section for university details -->
@@ -48,5 +49,11 @@
 
   <script src="/home.js"></script>
   <script src="/uni_background.js"></script>
+  <script>
+    const logoImages = document.querySelector('.logo_img');
+    const uniId = logoImages.getAttribute('data-id');
+    const universityImage = document.getElementById('logoImage');
+    universityImage.src = `/${uniId}.png`;
+  </script>
 </body>
 </html>

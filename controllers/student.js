@@ -6,6 +6,7 @@ const auth = require("../middleware/auth");  //this auth turns yellow when I exp
 const checkUserRole= require("../middleware/checkUserRole");
 const path = require('path');
 const fs = require('fs');
+const pdf = require('pdf-parse');
 
 const Student_model= require("../models/student-model");
 const StudentFile_model= require("../models/studentFile-model");
@@ -15,6 +16,18 @@ const University_model = require("../models/university-model");
 const Department_model = require("../models/department-model");
 const Faculty_model = require("../models/faculty-model");
 const { profile } = require('console');
+
+const {
+  mergeCookies,
+  fetchInitialPage,
+  extractToken,
+  submitFirstForm,
+  extractSecondToken,
+  submitSecondForm,
+  extractThirdToken,
+  submitThirdForm,
+  verifyDocument
+} = require('../helper scripts/documentVerification');
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -42,7 +55,6 @@ const upload_picture = multer({
   }).single('profilePicture');
 
 const handleErrors = (err) => {
-  console.log(err.message, err.code);
   let errors = { duplicate: '', email: '', password: ''};
 
   if (err.message === 'Please enter a valid email') {
@@ -75,6 +87,13 @@ exports.register = (req, res) => {
 
     const transaction = await sequelize.transaction();
 
+    let isApproved = false;
+
+    const extractTextFromPDF = async (fileBuffer) => {
+      const data = await pdf(fileBuffer);
+      return data.text;
+    };
+
     try {
       // Validate email
       if (!isEmail(email)) {
@@ -84,7 +103,90 @@ exports.register = (req, res) => {
       // Validate password length
       if (password.length < 6) {
         throw new Error('Minimum password length is 6');
+      } 
+      
+      const University = await University_model.findOne({
+        attributes: ['uni_name'],
+        where: { uni_id: university },  
+        include: {
+          model: Faculty_model,
+          attributes: ['fakulte_ad'],
+          where: {
+            fakulte_id: faculty
+          },
+          include: {
+            model: Department_model,
+            attributes: ['bolum_ad'],
+            where: {
+              department_id: department
+            }
+          }
+        } 
+      }); //attributes: [''] bir tek name mi alinsin, yoksa tum info
+      
+      university_name = University.uni_name;
+      faculty_name = University.Faculties[0].fakulte_ad;
+      department_name = University.Faculties[0].Departments[0].bolum_ad;
+
+      const fileBuffer = req.file.buffer;
+      const extractedText = await extractTextFromPDF(fileBuffer);
+
+      const normalizeText = text => text.replace(/\s+/g, ' ').trim();
+      const normalizedText = normalizeText(extractedText);
+      //console.log('Normalized Text:', normalizedText);
+
+      // Extract barcode
+      const barcodeMatch = normalizedText.match(/^[A-Z0-9]+/m);
+      const barcode = barcodeMatch ? barcodeMatch[0] : null;
+      console.log('Barcode:', barcode);
+
+      // Extract T.C. Kimlik No
+      const tcKimlikMatch = normalizedText.match(/(\d{11})\s*T\.C\. Kimlik No/);
+      const tcKimlik = tcKimlikMatch ? tcKimlikMatch[1] : null;
+      console.log('T.C. Kimlik No:', tcKimlik);
+
+      // Extract university name
+      const universityMatch = normalizedText.match(/Program\s*([^\/]+)\/[^\/]+\/[^\/]+\//);
+      const extractedUniversity = universityMatch ? universityMatch[1].trim() : null;
+      console.log('Extracted University:', extractedUniversity);
+
+      // Extract faculty name
+      const facultyMatch = normalizedText.match(/Program\s*[^\/]+\/([^\/]+)\/[^\/]+\//);
+      const extractedFaculty = facultyMatch ? facultyMatch[1].trim() : null;
+      console.log('Extracted Faculty:', extractedFaculty);
+
+      // Extract department name
+      const departmentMatch = normalizedText.match(/Program\s*[^\/]+\/[^\/]+\/([^\/]+)\//);
+      const extractedDepartment = departmentMatch ? departmentMatch[1].trim() : null;
+      console.log('Extracted Department:', extractedDepartment);
+
+      const success = await verifyDocument(barcode, tcKimlik);
+      if (
+        university_name === extractedUniversity &&
+        faculty_name === extractedFaculty &&
+        department_name === extractedDepartment &&
+        success
+      ){
+        isApproved = true;
       }
+      /*
+      console.log(extractedText);
+      const programMatch = extractedText.match(/Program[^\n]*\n[^\n]*\n[^\n]*\n[^\n]*\n?/i);
+      if (programMatch) {
+        const programInPDF = programMatch[0];
+        const parts = programInPDF.split(/\/(?![\r\n])/);
+        const partsWithSpace = parts.map(part => part.replace(/\n/g, ' '));
+        
+        const file_university_name = partsWithSpace[0].substring(7)
+        const file_faculty_name = partsWithSpace[1];
+        const file_department_name = partsWithSpace[2];
+        
+        if (university_name === file_university_name && faculty_name === file_faculty_name && department_name === file_department_name) {
+          isApproved = true;
+        }
+      }
+      */
+
 
       // Create new student
       const newStudent = await Student_model.create({
@@ -93,7 +195,7 @@ exports.register = (req, res) => {
         password: hashedPassword,
         uni_id: university,
         department_id: department,
-        approved: false
+        approved: isApproved
       }, { transaction });
 
       // Create student file entry
@@ -107,8 +209,20 @@ exports.register = (req, res) => {
       // Commit the transaction
       await transaction.commit();
 
+      //
+      if(isApproved){
+        const token = jwt.sign({ id: newStudent.id, userType: "student" }, process.env.JWT_SECRET, {
+          expiresIn: process.env.JWT_EXPIRES_IN
+        });
+        const cookieOptions = {
+          expires: new Date(
+            Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+          ),
+          httpOnly: true
+        }
+        res.cookie('jwt', token, cookieOptions);
+      }
       res.redirect("/");
-
     } catch (error) {
       // Rollback the transaction in case of error
       await transaction.rollback();
