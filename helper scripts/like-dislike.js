@@ -16,14 +16,8 @@ function sendVote(vote, answerId, div) {
     // Optimistically update the UI
     const likeCount = div.querySelector('.like-count');
     const dislikeCount = div.querySelector('.dislike-count');
-    
-    if (vote === 'like') {
-        likeCount.textContent = parseInt(likeCount.textContent) + 1;
-    } else if (vote === 'dislike') {
-        dislikeCount.textContent = parseInt(dislikeCount.textContent) + 1;
-    }
 
-    fetch(`http://localhost:3000/${answerId}/vote?vote=${vote}`, {
+    fetch(`/${answerId}/vote?vote=${vote}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
