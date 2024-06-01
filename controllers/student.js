@@ -257,7 +257,7 @@ exports.addAnswer = async (req, res) => {
       created_at: new Date()
     });
 
-    res.redirect(`/university/${question.University.uni_name.replace(/ /g, '-')}`);
+    res.redirect(`/question/${question_id}`);
   } catch (error) {
     console.error("Error adding answer:", error);
     res.status(500).send("Error adding answer.");
@@ -295,8 +295,14 @@ exports.getProfile = async (req, res) => {
         return acc;
     }, {});
 
+	const loggedInUser = {
+		id: req.user.id,
+		userType: req.user.userType
+	};
+
     res.render('Student/profile', {
         user: student.dataValues,
+		loggedInUser,
         userType: "student", // Pass the userType
         questionAnswersMap // Pass the grouped answers map
     });

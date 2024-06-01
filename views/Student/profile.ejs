@@ -6,6 +6,12 @@
     <title>Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="/studentProfile.css">
+    <style>
+        .answer-details {
+            display: none; /* Ensure answers are hidden initially */
+            margin-left: 20px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -17,16 +23,20 @@
         <div class="user-details-container">
             <div class="profile-picture" id="profilePictureContainer">
                 <img src="<%= user.profilePicture ? user.profilePicture : '/default_profile.png' %>" alt="Profile Picture" id="profilePicture">
-                <div class="overlay" id="overlay">
-                    <label for="profilePictureInput" id="uploadButton">
-                        <i class="ri-camera-fill"></i> Upload Picture
-                    </label>
-                </div>
+                <% if (user.id === loggedInUser.id) { %>
+                    <div class="overlay" id="overlay">
+                        <label for="profilePictureInput" id="uploadButton">
+                            <i class="ri-camera-fill"></i> Upload Picture
+                        </label>
+                    </div>
+                <% } %>
             </div>
             
             <input type="file" id="profilePictureInput" name="profilePicture" accept="image/png, image/jpeg" style="display: none;">
-            <button id="confirmButton" style="display: none;">Confirm</button>
-            <button id="cancelButton" style="display: none;">Cancel</button>
+            <% if (user.id === loggedInUser.id) { %>
+                <button id="confirmButton" style="display: none;">Confirm</button>
+                <button id="cancelButton" style="display: none;">Cancel</button>
+            <% } %>
             <div class="user-details">
                 <h2>User Details</h2>
                 <p><strong>Name:</strong> <%= user.username %></p>
@@ -46,13 +56,15 @@
         </div>
 
         <div class="answers-details">
-            <h2>Answers</h2>
+            <h2>Answered Questions</h2>
             <% Object.keys(questionAnswersMap).forEach(question => { %>
-                <div class="answer">
-                    <h3>Question: <%= question %></h3>
-                    <% questionAnswersMap[question].forEach(answer => { %>
-                        <p><strong>Answer:</strong> <%= answer %></p>
-                    <% }) %>
+                <div class="question">
+                    <h3 class="question-text" style="cursor: pointer;"><%= question %></h3>
+                    <div class="answer-details">
+                        <% questionAnswersMap[question].forEach(answer => { %>
+                            <p><strong>Answer:</strong> <%= answer %></p>
+                        <% }) %>
+                    </div>
                 </div>
             <% }) %>
         </div>
@@ -66,60 +78,74 @@
             const profilePictureInput = document.getElementById('profilePictureInput');
             const confirmButton = document.getElementById('confirmButton');
             const cancelButton = document.getElementById('cancelButton');
-
-            profilePictureContainer.addEventListener('mouseenter', () => {
-                overlay.style.display = 'flex';
-            });
-
-            profilePictureContainer.addEventListener('mouseleave', () => {
-                overlay.style.display = 'none';
-            });
-
-            profilePictureInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    const validTypes = ['image/jpeg', 'image/png'];
-                    if (!validTypes.includes(file.type)) {
-                        alert('Invalid file type. Please upload an image file (PNG, JPG, JPEG).');
-                        profilePictureInput.value = ''; // Reset the input
-                        return;
-                    }
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        document.getElementById('profilePicture').src = e.target.result;
-                        confirmButton.style.display = 'inline-block';
-                        cancelButton.style.display = 'inline-block';
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            confirmButton.addEventListener('click', () => {
-                const file = profilePictureInput.files[0];
-                if (file) {
-                    const formData = new FormData();
-                    formData.append('profilePicture', file);
-
-                    fetch('/uploadProfilePicture', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            console.error(data.error);
-                        } else {
-                            location.reload(); // Reload the page to show the new profile picture
+    
+            if (overlay) {
+                profilePictureContainer.addEventListener('mouseenter', () => {
+                    overlay.style.display = 'flex';
+                });
+    
+                profilePictureContainer.addEventListener('mouseleave', () => {
+                    overlay.style.display = 'none';
+                });
+    
+                profilePictureInput.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const validTypes = ['image/jpeg', 'image/png'];
+                        if (!validTypes.includes(file.type)) {
+                            alert('Invalid file type. Please upload an image file (PNG, JPG, JPEG).');
+                            profilePictureInput.value = ''; // Reset the input
+                            return;
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-                }
-            });
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            document.getElementById('profilePicture').src = e.target.result;
+                            confirmButton.style.display = 'inline-block';
+                            cancelButton.style.display = 'inline-block';
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+    
+                confirmButton.addEventListener('click', () => {
+                    const file = profilePictureInput.files[0];
+                    if (file) {
+                        const formData = new FormData();
+                        formData.append('profilePicture', file);
+    
+                        fetch('/uploadProfilePicture', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                console.error(data.error);
+                            } else {
+                                location.reload(); // Reload the page to show the new profile picture
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    }
+                });
+    
+                cancelButton.addEventListener('click', () => {
+                    location.reload(); // Reload the page to revert changes
+                });
+            }
 
-            cancelButton.addEventListener('click', () => {
-                location.reload(); // Reload the page to revert changes
+            // Add event listeners to toggle answer visibility
+            document.querySelectorAll('.question-text').forEach(question => {
+                question.addEventListener('click', function() {
+                    const answerDetails = this.nextElementSibling;
+                    if (answerDetails.style.display === 'none' || answerDetails.style.display === '') {
+                        answerDetails.style.display = 'block';
+                    } else {
+                        answerDetails.style.display = 'none';
+                    }
+                });
             });
         });
     </script>

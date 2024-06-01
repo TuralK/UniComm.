@@ -15,7 +15,6 @@
 
   <main class="main">
     <div class="main__content">
-      <h1 class="main__title">Question Details</h1>
 
       <!-- Back Button -->
       <button onclick="window.location.href='/university/<%= question.University.uni_name.replace(/ /g, '-') %>'" class="btn btn-secondary">
@@ -26,8 +25,40 @@
         <h2><%= question.question_text %></h2>
         <p>Asked on <%= question.created_at.toDateString() %></p>
 
+		<% if (user && userType === 'student' && user.uni_id === university.uni_id) { %>
+			<div class="submit-answer">
+			  <form action="/answerQuestion" method="POST">
+				<input type="hidden" name="question_id" value="<%= question.question_id %>">
+				<div class="form-group">
+				  <textarea class="form-control" name="answer_text" rows="2" placeholder="Write your answer here..." required></textarea>
+				</div>
+				<button type="submit" class="btn btn-success">Submit Answer</button>
+			  </form>
+			</div>
+		<% } %>
+
         <h3>Answers</h3>
         <ul class="answers-list">
+			<% if (answers && answers.length) { %>
+			  <% answers.forEach(answer => { %>
+				<li class="answer-item">
+				  <div class="profile-info">
+					<a href="/profile/<%= answer.Student.id %>" class="profile-link">
+					  <img src="<%= answer.Student.profilePicture ? answer.Student.profilePicture : '/default_profile.png' %>" alt="<%= answer.Student.username %>'s Profile Picture" class="profile-picture">
+					</a>
+					<div class="profile-name">
+					  <a href="/profile/<%= answer.Student.id %>" class="profile-link">
+						<%= answer.Student.username %>
+					  </a>
+					</div>
+				  </div>
+				  <p><%= answer.answer_text %> (Answered on <%= answer.created_at.toDateString() %>)</p>
+				</li>
+			  <% }) %>
+			<% } else { %>
+			  <li>No answers yet.</li>
+			<% } %>
+		  </ul>
           <% if (answers && answers.length) { %>
             <% answers.forEach(answer => { %>
               <li class="answer-item">
@@ -36,6 +67,14 @@
                   <%= answer.Student.username %>
                 </a>
                 <p><%= answer.answer_text %> (Answered on <%= answer.created_at.toDateString() %>)</p>
+                <div class="vote" data-id="<%= answer.answer_id %>"> 
+                <button class="btn btn-success" onclick="sendVote('like', <%= answer.answer_id %> )">Like </button>
+                <button class="btn btn-secondary" onclick="sendVote('dislike', <%= answer.answer_id %>)">Dislike</button>
+                </div>
+                <div>
+                  Likes <input type="text" disabled value="">
+                  Dislikes <input type="text" disabled value="">
+                </div>
               </li>
             <% }) %>
           <% } else { %>
@@ -58,5 +97,6 @@
 
   <script src="/home.js"></script>
   <script src="/question_background.js"></script>
+  <script src="/like-dislike.js"></script>
 </body>
 </html>
