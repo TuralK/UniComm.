@@ -104,6 +104,16 @@ exports.register = (req, res) => {
       if (password.length < 6) {
         throw new Error('Minimum password length');
       } 
+
+	  // Create new student
+      const newStudent = await Student_model.create({
+        username: username,
+        email: email,
+        password: hashedPassword,
+        uni_id: university,
+        department_id: department,
+        approved: isApproved
+      });
       
       const University = await University_model.findOne({
         attributes: ['uni_name'],
@@ -180,16 +190,6 @@ exports.register = (req, res) => {
         }
       }
       */
-
-      // Create new student
-      const newStudent = await Student_model.create({
-        username: username,
-        email: email,
-        password: hashedPassword,
-        uni_id: university,
-        department_id: department,
-        approved: isApproved
-      });
 
       // Create student file entry
       await StudentFile_model.create({
