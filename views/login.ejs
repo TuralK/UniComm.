@@ -1,35 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>UniComm - Login</title>
    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
    <link rel="stylesheet" href="/login.css">
-
 </head>
-
 <body>
     <div class="login">
       <img src="" alt="login image" class="login__img" id="randomImage">
       <form action="/" method="POST" class="login__form">
         <a href="/" style="color: white;"><h1 class="login__title title" style="font-size: 38px; font-weight: bold;">UniComm</h1></a>
         <h2 class="login__title">Login</h2>
-
         <div class="login__content">
             <div class="login__box">
               <i class="ri-mail-line login__icon"></i>
-
               <div class="login__box-input">
                 <input type="email" placeholder=" " id="email" name="email" required class="login__input">
                 <label for="login-email" class="login__label">Email</label>
               </div>
             </div>
-
             <div class="login__box">
               <i class="ri-lock-2-line login__icon"></i>
-
               <div class="login__box-input">
                 <input type="password" placeholder=" " id="password" name="password" required class="login__input">
                 <label for="login-pass" class="login__label">Password</label>
@@ -37,23 +30,33 @@
               </div>
             </div>
         </div>
-
         <div class="login error"></div>
-
         <div class="login__check">
-          <a href="#" class="login__forgot">Forgot Password?</a>
+          <a href="#" class="login__forgot" id="forgotPasswordLink">Forgot Password?</a>
         </div>
-
         <button type="submit" class="login__button">Login</button>
-
         <p class="login__register">
           Don't have an account? <a href="/register">Register</a>
         </p>
       </form>
     </div>
 
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Forgot Password</h2>
+        <form id="forgotPasswordForm">
+          <input type="email" placeholder="Enter your email" id="forgotPasswordEmail" required>
+          <button type="submit">Submit</button>
+          <div class="forgot-password error"></div>
+        </form>
+      </div>
+    </div>
+
    <script src="/login-handling.js"></script>
    <script src="/password_visibility.js"></script>
    <script src="/random_picture.js"></script>
+   <script src="/forgot_password.js"></script>
 </body>
 </html>

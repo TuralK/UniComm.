@@ -1,6 +1,9 @@
 const express = require('express');
 const auth = require("../middleware/auth");
 const checkUserRole = require("../middleware/checkUserRole");
+const nodeMailer = require("nodemailer");
+const bcrypt= require("bcrypt");
+const jwt=require("jsonwebtoken");
 
 const Admin_model = require("../models/admin-model");
 const Student_model = require("../models/student-model");
@@ -13,6 +16,24 @@ const Department = require('../models/department-model');
 
 
 const router = express.Router();
+
+async function findUserByEmail(email) {
+	let user = null;
+	let userType = '';
+
+  if (email === "unicomm_admin@gmail.com") {
+    user = await Admin_model.findOne({ where: { email } });
+		userType = "admin";
+  }
+	else {
+		user = await Student_model.findOne({ where: { email } });
+		userType = "student";
+	}
+
+	if(user) return { user, userType };
+
+  return null;
+}
 
 //=====================Move some gets to auth(according to user type)=====================//
 
@@ -333,6 +354,95 @@ router.put('/:answerId/vote', async (req, res) => {
     console.error("Error recording vote:", error);
     res.status(500).send("Error recording vote.");
   }
+});
+
+router.post("/forgotPassword", async function(req, res) {
+    const { email } = req.body;
+    const user = await findUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({ error: 'No user with that email' });
+    }
+    const token = jwt.sign({ id: user.user.id, userType: user.userType }, 'secretKey', { expiresIn: '5m' });
+
+    const transporter = nodeMailer.createTransport({
+        service: 'gmail',
+    	auth: {
+        	user: 'enesbilalbabaturalpro06@gmail.com', // your Gmail address
+        	pass: 'elde beun xhtc btxu' // your Gmail password or App Password if 2FA is enabled
+    	}
+    });
+
+    await transporter.sendMail({
+        from: '"Buket Erşahin" <enesbilalbabaturalpro06@gmail.com>',
+        to: email,
+        subject: 'Password Reset Link',
+		html: `<a href="http://localhost:3000/changePassword?token=${token}">Reset Password</a>`
+    });
+    res.status(200).json({ success: 'Password reset link has been sent.' });
+});
+
+router.get('/changePassword', (req, res) => {
+    const { token } = req.query;
+
+    // Check if the token exists
+    if (!token) {
+        return res.status(400).send('No token provided.');
+    }
+
+    try {
+        // If token is valid, render the page with the token
+        res.render('changePassword', { token });
+    } catch (err) {
+        // Handle different errors differently
+        if (err.name === 'TokenExpiredError') {
+            res.status(401).send('Token has expired.');
+        } else {
+            res.status(400).send('Invalid or expired token');
+        }
+    }
+});
+
+router.post('/changePassword', async (req, res) => {
+    const { password, confirmPassword, token } = req.body;
+    if (password.length < 6) {
+        return res.status(404).json({ error: 'Minimum password length is 6 characters' });
+    }
+
+	if (password !== confirmPassword) {
+		return res.status(404).json({ error: 'Passwords do not match' });
+	}
+
+    try {
+		//console.log(decoded);
+		const decoded = jwt.verify(token, 'secretKey');
+        const { id, userType } = decoded;
+        let model;
+        switch (userType) {
+            case 'admin':
+                model = Admin_model;
+                break;
+            case 'student':
+                model = Student_model;
+                break;
+            default:
+                return res.status(400).json({ error: 'Invalid user type' });
+        }
+
+		const user = await model.findOne({ where: { id } });
+
+		const checkPassword= await bcrypt.compare(password,user.password);
+		
+        if(checkPassword) {
+			return res.status(400).json({ error: 'New password must be different from the current password.' });
+		}
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await model.update( { password: hashedPassword }, { where: { id } } );
+		res.status(200).json({ success: 'password updated succesfully' });
+    } catch (error) {
+        console.error('Error updating password:', error);
+        res.status(500).json({ error: 'Failed to update password' });
+    }
 });
  
 module.exports = router;

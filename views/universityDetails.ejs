@@ -40,7 +40,7 @@
       <h2>Questions</h2>
       <ul class="questions-list">
         <% if (questions && questions.length) { %>
-          <% questions.forEach(question => { %>
+          <% questions.reverse().forEach(question => { %>
             <li class="question-item">
 				<a href="/question/<%= question.question_id %>" class="question-link">
 				  <%= question.question_text %> (Asked on <%= question.created_at.toDateString() %>)
