@@ -11,7 +11,7 @@
             display: none; /* Ensure answers are hidden initially */
             margin-left: 20px;
         }
-        body{
+		body{
             background-image: url('/<%= student.University.uni_id %>.jpg');
         }
     </style>
@@ -21,7 +21,7 @@
         <%- include('../nav') %>
     </header>
    
-    <div class="profile-container" data-uni-id="<%= student.University.uni_id %>">
+    <div class="profile-container">
         <h1>Profile</h1>
         <div class="user-details-container">
             <div class="profile-picture" id="profilePictureContainer">
@@ -62,7 +62,7 @@
             <h2>Answered Questions</h2>
             <% Object.keys(questionAnswersMap).forEach(question => { %>
                 <div class="question">
-                    <h3 class="question-text" style="cursor: pointer;"><%= question %></h3>
+                    <h3 class="question-text"><%= question %></h3>
                     <div class="answer-details">
                         <% questionAnswersMap[question].forEach(answer => { %>
                             <p><strong>Answer:</strong> <%= answer %></p>
@@ -74,7 +74,6 @@
     </div>
 
     <script src="/home.js"></script>
-	<script src="/uni_background.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const profilePictureContainer = document.getElementById('profilePictureContainer');
