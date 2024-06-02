@@ -35,7 +35,8 @@
 			  <form action="/answerQuestion" method="POST">
 				<input type="hidden" name="question_id" value="<%= question.question_id %>">
 				<div class="form-group">
-				  <textarea oninput="autoResize(this)" class="form-control" name="answer_text" rows="1" placeholder="Write your answer here..." required></textarea>
+					<img src="<%= userValues.profilePicture ? userValues.profilePicture : '/default_profile.png' %>" alt="<%= userValues.username %>'s Profile Picture" class="profile-picture">
+				  <textarea oninput="autoResize(this)" class="form-control" name="answer_text" rows="1" placeholder="Write your answer here..."  maxlength="700" required></textarea>
 					<hr>
 				</div>
 				<button style="float: right;" type="submit" class="btn btn-success">Submit Answer</button>
@@ -53,12 +54,11 @@
 								<img src="<%= answer.Student.profilePicture ? answer.Student.profilePicture : '/default_profile.png' %>" alt="<%= answer.Student.username %>'s Profile Picture" class="profile-picture">
 							</a>
 							<div class="profile-name">
-								<a href="/profile/<%= answer.Student.id %>" class="profile-link">
-									<%= answer.Student.username %>
-								</a>
+								<a href="/profile/<%= answer.Student.id %>" class="profile-link" style="font-weight: bold;"> <%= answer.Student.username %> </a>
+								(Answered on <%= answer.created_at.toDateString() %>)
 							</div>
 						</div>
-						<p><%= answer.answer_text %> (Answered on <%= answer.created_at.toDateString() %>)</p>
+						<p><%= answer.answer_text %> </p>
 						<div class="voting" data-answer-id="<%= answer.answer_id %>">
 							<button class="btn like-button">Like <i class="ri-thumb-up-line"></i></button>
 							<span class="like-count" style="padding-left: 1px; padding-right: 4px;"> <%= answer.likes %> </span>

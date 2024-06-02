@@ -32,10 +32,12 @@ h3 {
 .answer-item {
     padding: 10px 10px 10px 0; /* Adjust padding */
     border-bottom: 1px solid #ccc;
+	margin-left: 10px;
 }
 
 .answer-item p {
     margin: 5px 0; /* Adjust margin */
+	margin-left: 50px;
 }
 
 .profile-info {
@@ -61,12 +63,12 @@ h3 {
     height: 40px;
     border-radius: 50%;
     margin-right: 10px; /* Adjust margin if needed */
-    display: block;
+    display: flex;
     margin: 0 auto; /* Center the profile picture */
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     margin-left: 10px;
 }
 
@@ -77,6 +79,7 @@ h3 {
     cursor: pointer;
     border: none;
     border-radius: 4px;
+	margin-left: 50px;
 }
 
 .btn-secondary {
@@ -114,11 +117,11 @@ h3 {
     background-color: transparent;
 }
 .submit-answer .form-group textarea:focus {
+	display: inline;
     outline: none; /* Removes the default focus outline */
 }
 
 .submit-answer .btn-success {
     display: block;
-    margin-top: 10px;
     margin-left: 10px;
 }
