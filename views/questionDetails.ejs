@@ -35,7 +35,7 @@
 			  <form action="/answerQuestion" method="POST">
 				<input type="hidden" name="question_id" value="<%= question.question_id %>">
 				<div class="form-group">
-				  <input type="text" class="form-control" name="answer_text" rows="2" placeholder="Write your answer here..." required></textarea>
+				  <textarea oninput="autoResize(this)" class="form-control" name="answer_text" rows="1" placeholder="Write your answer here..." required></textarea>
 					<hr>
 				</div>
 				<button style="float: right;" type="submit" class="btn btn-success">Submit Answer</button>
@@ -75,8 +75,14 @@
     </div>
   </main>
 
-  <script src="/home.js"></script>
-  <script src="/like-dislike.js"></script>
-  <script src="/uni_background.js"></script>
+  	<script src="/home.js"></script>
+  	<script src="/like-dislike.js"></script>
+  	<script src="/uni_background.js"></script>
+	<script>
+		function autoResize(textarea) {
+			textarea.style.height = 'auto'; // Reset the height to auto
+			textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to the scrollHeight
+		}
+	</script>
 </body>
 </html>

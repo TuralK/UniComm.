@@ -68,7 +68,7 @@ const handleErrors = (err) => {
   if (err.message === 'Validation error') {
     errors.duplicate = 'That email is already registered';
   }
-  
+
   return errors;
 }
 
@@ -197,9 +197,9 @@ exports.register = (req, res) => {
           httpOnly: true
         }
         res.cookie('jwt', token, cookieOptions);
-		return res.status(200).json({ message: "user added to database" })
+		  return res.status(200).json({ message: "user added to database" })
       }
-      res.status(200).json({ message: "registiration pending..." })
+      res.status(200).json({ message: "registration pending..." })
     } catch (error) {
       	const errors = handleErrors(error);
       	res.status(400).json({ errors });

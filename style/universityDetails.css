@@ -52,6 +52,14 @@
     padding: 0;
 }
 
+.question-link {
+    display: block;
+    padding: 1rem;
+    text-decoration: none;
+    color: inherit;
+    word-wrap: break-word; /* This will ensure long words wrap and don't overflow */
+}
+
 .question-item {
     border: 1px solid var(--box-border-color);
     padding: 0;
@@ -59,14 +67,9 @@
     margin-bottom: 1rem;
     background: var(--box-color);
     transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden; /* This will hide any overflow that is not wrapped */
 }
 
-.question-link {
-    display: block;
-    padding: 1rem;
-    text-decoration: none;
-    color: inherit;
-}
 
 .question-link:hover {
     background-color: #f0f0f0;
