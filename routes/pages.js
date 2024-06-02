@@ -230,6 +230,11 @@ router.get('/university/:uni_name', auth, async (req, res) => {
 });
 
 router.get('/question/:id', auth, async (req, res) => {
+  const idsCookie = req.cookies.ids;
+  if (!idsCookie) {
+    let ids = {};
+    res.cookie('ids', JSON.stringify(ids), { maxAge: 24 * 60 * 60 * 1000 }); // Update cookie
+  };
 	const question = await Question_model.findByPk(req.params.id, {
 		include: [
 			{ 
@@ -320,22 +325,38 @@ router.put('/:answerId/vote', async (req, res) => {
     if (!answer) {
       throw new Error("There is no such answer!");
     }
-
-    const vote = req.query.vote;
-    if (!vote || (vote !== 'like' && vote !== 'dislike')) {
+    
+    var vote = req.query.vote;
+    const isActive=req.query.isActive;
+    if (!vote || (vote !== 'like' && vote !== 'dislike' && vote !== 'no' )) {
       return res.status(400).send('Invalid vote type');
     }
 
     if (ids[answerId]) {
-      if ((vote === 'like' && ids[answerId]== 'like') || (vote === 'dislike' && ids[answerId]== 'dislike')  );
-      else if (vote === 'dislike' && ids[answerId]== 'like') {
+      if (vote === 'like' && ids[answerId]== 'like'){
+        if(isActive=='yes'){await answer.decrement('likes'); vote='no'}
+        else{await answer.increment('likes');}
+        }
+      if (vote === 'dislike' && ids[answerId]== 'dislike') {
+        if(isActive=='yes'){await answer.decrement('dislikes'); vote='no'}
+        else{await answer.increment('dislikes');}
+        }
+      
+      if (vote === 'dislike' && ids[answerId]== 'like') {
         await answer.increment('dislikes');
         await answer.decrement('likes');
       }
-      else if (vote === 'like' && ids[answerId]== 'dislike') {
+      if (vote === 'like' && ids[answerId]== 'dislike') {
         await answer.decrement('dislikes');
         await answer.increment('likes');
       }
+      if (vote === 'like' && ids[answerId]== 'no') {
+        await answer.increment('likes');
+      }
+      if (vote === 'dislike' && ids[answerId]== 'no') {
+        await answer.increment('dislikes');
+      }
+      
      
     }
     else{
@@ -347,7 +368,6 @@ router.put('/:answerId/vote', async (req, res) => {
     }
     await answer.reload(); // Ensure latest values are returned
     ids[answerId] = vote; // Store the answer ID and vote type in the cookie
-
     res.cookie('ids', JSON.stringify(ids), { maxAge: 24 * 60 * 60 * 1000 }); // Update cookie
     res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
   } catch (error) {
