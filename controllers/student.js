@@ -170,20 +170,23 @@ exports.register = (req, res) => {
       }
 
       const newStudent = await Student_model.create({
-        username: username,
-        email: email,
-        password: hashedPassword,
-        uni_id: university,
-        department_id: department,
-        approved: isApproved
+          username: username,
+          email: email,
+          password: hashedPassword,
+          uni_id: university,
+          department_id: department,
+          approved: isApproved
       });
+
+      if (!isApproved) {
       // Create student file entry
-      await StudentFile_model.create({
-        fileName: req.file.originalname,
-        fileData: req.file.buffer,
-        mimeType: req.file.mimetype,
-        studentId: newStudent.id
-      });
+        await StudentFile_model.create({
+          fileName: req.file.originalname,
+          fileData: req.file.buffer,
+          mimeType: req.file.mimetype,
+          studentId: newStudent.id
+        });
+      }
 
       //
       if(isApproved){
@@ -262,7 +265,7 @@ exports.uploadProfilePicture = async (req, res) => {
 
             // Construct the path to save the profile picture with the correct file extension
             const profilePicturePath = `/profile_${student.id}.${fileExtension}`;
-			const profilePictureAbsolutePath = path.join(__dirname, '..', 'profile_pictures', `profile_${student.id}.${fileExtension}`);
+			      const profilePictureAbsolutePath = path.join(__dirname, '..', 'profile_pictures', `profile_${student.id}.${fileExtension}`);
 
             // Iterate over possible file extensions and delete the old profile picture if exists
             const possibleExtensions = ['png', 'jpg', 'jpeg'];
@@ -276,7 +279,7 @@ exports.uploadProfilePicture = async (req, res) => {
             // Save the profile picture
             fs.writeFileSync(profilePictureAbsolutePath, req.file.buffer);
 
-			student.profilePicture = profilePicturePath;
+			    student.profilePicture = profilePicturePath;
             await student.save();
 
             res.json({ message: "Profile picture uploaded successfully" });
