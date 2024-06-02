@@ -114,3 +114,8 @@ h3 {
     margin-top: 10px;
     margin-left: 10px;
 }
+
+.form-control{
+    width: 100%;
+    background-color: transparent;
+}

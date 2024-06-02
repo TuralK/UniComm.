@@ -32,7 +32,7 @@
       <form action="/askQuestion" method="POST">
         <input type="hidden" name="uni_id" value="<%= university.uni_id %>">
         <div class="form-group">
-          <textarea class="form-control" name="question_text" rows="3" placeholder="Ask your question here..." required></textarea>
+          <textarea style="resize: none;" class="form-control" name="question_text" rows="3" placeholder="Ask your question here..." required></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>

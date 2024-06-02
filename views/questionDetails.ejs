@@ -35,9 +35,10 @@
 			  <form action="/answerQuestion" method="POST">
 				<input type="hidden" name="question_id" value="<%= question.question_id %>">
 				<div class="form-group">
-				  <textarea class="form-control" name="answer_text" rows="2" placeholder="Write your answer here..." required></textarea>
+				  <input type="text" class="form-control" name="answer_text" rows="2" placeholder="Write your answer here..." required></textarea>
+					<hr>
 				</div>
-				<button type="submit" class="btn btn-success">Submit Answer</button>
+				<button style="float: right;" type="submit" class="btn btn-success">Submit Answer</button>
 			  </form>
 			</div>
 		<% } %>
