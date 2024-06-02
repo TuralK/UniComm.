@@ -40,7 +40,6 @@ button {
 body {
   color: var(--text-color);
   background-color: var(--secondary-color);
-  background-image: url('/10.jpg'); /* Updated background image */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -63,7 +62,7 @@ img {
 
 /*=============== MAIN CONTENT ===============*/
 .main {
-  margin-top: 5rem;
+  margin-top: 6rem;
   padding: 2rem;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 1rem;

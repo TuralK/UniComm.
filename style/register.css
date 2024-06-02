@@ -102,8 +102,8 @@ img {
   border-bottom: 2px solid var(--white-color);
 }
 
-.register__content {
-  row-gap: 1.75rem;
+.register__content .register__box.with-gap{
+  margin-bottom: 1.75rem;
 }
 
 .register__icon,
@@ -218,10 +218,16 @@ img {
   }
 }
 
-.error{
+.duplicate.error, .email.error, .password.error{
     color: #ff0000;
-    margin: 5px;   
+    margin: 0.125rem;   
     font-size: 0.8em;
     font-weight: bold;
-	  display: none;
+    height: 1.50rem;
+    display: none;
+}
+
+.gap_1, .gap_2 {
+  height: 1.75rem;
+  display: block;
 }

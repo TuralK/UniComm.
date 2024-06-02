@@ -66,7 +66,7 @@ const handleErrors = (err) => {
   }
   
   if (err.message === 'Validation error') {
-    errors.duplicate = 'That email or username is already registered';
+    errors.duplicate = 'That email is already registered';
   }
 
   return errors;
@@ -84,8 +84,6 @@ exports.register = (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const sequelize = require('../data/db'); // Adjust the path to your sequelize instance
-
-    const transaction = await sequelize.transaction();
 
     let isApproved = false;
 
@@ -105,16 +103,13 @@ exports.register = (req, res) => {
         throw new Error('Minimum password length');
       } 
 
-	  // Create new student
-      const newStudent = await Student_model.create({
-        username: username,
-        email: email,
-        password: hashedPassword,
-        uni_id: university,
-        department_id: department,
-        approved: isApproved
-      });
-      
+      if (
+        await Student_model.findOne({
+        where : {email: email}
+        })){
+        throw new Error('Validation error');
+      }
+
       const University = await University_model.findOne({
         attributes: ['uni_name'],
         where: { uni_id: university },  
@@ -173,24 +168,15 @@ exports.register = (req, res) => {
       ){
         isApproved = true;
       }
-      /*
-      console.log(extractedText);
-      const programMatch = extractedText.match(/Program[^\n]*\n[^\n]*\n[^\n]*\n[^\n]*\n?/i);
-      if (programMatch) {
-        const programInPDF = programMatch[0];
-        const parts = programInPDF.split(/\/(?![\r\n])/);
-        const partsWithSpace = parts.map(part => part.replace(/\n/g, ' '));
-        
-        const file_university_name = partsWithSpace[0].substring(7)
-        const file_faculty_name = partsWithSpace[1];
-        const file_department_name = partsWithSpace[2];
-        
-        if (university_name === file_university_name && faculty_name === file_faculty_name && department_name === file_department_name) {
-          isApproved = true;
-        }
-      }
-      */
 
+      const newStudent = await Student_model.create({
+        username: username,
+        email: email,
+        password: hashedPassword,
+        uni_id: university,
+        department_id: department,
+        approved: isApproved
+      });
       // Create student file entry
       await StudentFile_model.create({
         fileName: req.file.originalname,
@@ -198,9 +184,6 @@ exports.register = (req, res) => {
         mimeType: req.file.mimetype,
         studentId: newStudent.id
       });
-
-      // Commit the transaction
-      await transaction.commit();
 
       //
       if(isApproved){
@@ -214,9 +197,9 @@ exports.register = (req, res) => {
           httpOnly: true
         }
         res.cookie('jwt', token, cookieOptions);
-		return res.status(200).json({ message: "user added to database" })
+		  return res.status(200).json({ message: "user added to database" })
       }
-      res.status(200).json({ message: "registiration pending..." })
+      res.status(200).json({ message: "registration pending..." })
     } catch (error) {
       	const errors = handleErrors(error);
       	res.status(400).json({ errors });
