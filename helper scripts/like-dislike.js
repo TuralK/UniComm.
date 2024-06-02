@@ -9,28 +9,36 @@ document.addEventListener('DOMContentLoaded', function() {
         div.querySelector('.like-button').addEventListener('click', function() {
             const idsCookie = getCookie('ids');
             const decodedCookie = JSON.parse(decodeURIComponent(idsCookie));
-            sendVote('like', answerId, div);
-            div.querySelector('.like-button').style.backgroundColor = 'blue';
-            div.querySelector('.dislike-button').style.backgroundColor = 'buttonface';
+            let isActive="";
+            if(div.querySelector('.like-button').style.backgroundColor =='blue'){isActive='yes';}
+            else{isActive='no';}
+            sendVote('like', answerId, div,isActive);
+            if(decodedCookie[answerId]==='like' && isActive=='yes'){div.querySelector('.like-button').style.backgroundColor = 'buttonface';}
+            else{div.querySelector('.like-button').style.backgroundColor = 'blue';
+            div.querySelector('.dislike-button').style.backgroundColor = 'buttonface';}
             
         });
         div.querySelector('.dislike-button').addEventListener('click', function() {
-            sendVote('dislike', answerId, div);
+            let isActive="";
+            if(div.querySelector('.dislike-button').style.backgroundColor =='blue'){isActive='yes';}
+            else{isActive='no';}
+            sendVote('dislike', answerId, div,isActive);
             const idsCookie = getCookie('ids');
             const decodedCookie = JSON.parse(decodeURIComponent(idsCookie));
-            div.querySelector('.dislike-button').style.backgroundColor = 'blue';
-            div.querySelector('.like-button').style.backgroundColor = 'buttonface';
+            if (decodedCookie[answerId] === 'dislike' && isActive=='yes') {div.querySelector('.dislike-button').style.backgroundColor = 'buttonface';}
+            else{div.querySelector('.dislike-button').style.backgroundColor = 'blue';
+            div.querySelector('.like-button').style.backgroundColor = 'buttonface';}
             
         });
     });
 });
 
-function sendVote(vote, answerId, div) {
+function sendVote(vote, answerId, div,isActive) {
     // Optimistically update the UI
     const likeCount = div.querySelector('.like-count');
     const dislikeCount = div.querySelector('.dislike-count');
 
-    fetch(`/${answerId}/vote?vote=${vote}`, {
+    fetch(`/${answerId}/vote?vote=${vote}&isActive=${isActive}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
