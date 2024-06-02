@@ -32,7 +32,7 @@
       <form action="/askQuestion" method="POST">
         <input type="hidden" name="uni_id" value="<%= university.uni_id %>">
         <div class="form-group">
-          <textarea style="resize: none;" class="form-control" name="question_text" rows="3" placeholder="Ask your question here..." required></textarea>
+          <textarea style="resize: none;" class="form-control" name="question_text" rows="3" placeholder="Ask your question here..."  maxlength="400" required></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
@@ -43,7 +43,13 @@
           <% questions.reverse().forEach(question => { %>
             <li class="question-item">
 				<a href="/question/<%= question.question_id %>" class="question-link">
-				  <%= question.question_text %> (Asked on <%= question.created_at.toDateString() %>)
+				  <%= question.question_text %> <br> 
+				  <% if (question.Answers && question.Answers.length > 0) { %>
+					<span class="answer-count">Answers: <%= question.Answers.length %></span>
+				  <% } else { %>
+					<span class="answer-count">No answers yet</span>
+				  <% } %>
+				  (Asked on <%= question.created_at.toDateString() %>)
 				</a>
 			</li>
           <% }) %>

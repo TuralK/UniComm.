@@ -157,3 +157,7 @@ form button:hover {
     text-decoration: underline;
     cursor: pointer;
 }
+
+.question {
+	word-wrap: break-word;
+}

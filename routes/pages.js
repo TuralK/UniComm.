@@ -373,7 +373,7 @@ router.post("/forgotPassword", async function(req, res) {
     });
 
     await transporter.sendMail({
-        from: '"Buket Erşahin" <enesbilalbabaturalpro06@gmail.com>',
+        from: '"UniComm" <enesbilalbabaturalpro06@gmail.com>',
         to: email,
         subject: 'Password Reset Link',
 		html: `<a href="http://localhost:3000/changePassword?token=${token}">Reset Password</a>`
