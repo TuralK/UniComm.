@@ -17,7 +17,6 @@
     position: relative;
     width: 100px;
     height: 100px;
-    margin-right: 20px;
     border-radius: 50%;
 }
 
@@ -61,34 +60,43 @@
     margin-right: 5px;
 }
 
+#buttonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 #confirmButton, #cancelButton {
-    display: none;
-    margin-top: 10px;
-    padding: 10px;
+    width: 80px; /* Smaller width */
+    padding: 5px 0;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 14px; /* Smaller font size */
 }
 
 #confirmButton {
-    background-color: #007BFF;
+    background-color: #4CAF50; /* Green for confirm */
+    transition: background-color 0.3s ease;
 }
 
 #confirmButton:hover {
-    background-color: #0056b3;
+    background-color: #45a049; /* Darken on hover */
 }
 
 #cancelButton {
-    background-color: #dc3545;
+    background-color: #f44336; /* Red for cancel */
+    transition: background-color 0.3s ease;
 }
 
 #cancelButton:hover {
-    background-color: #bb2d3b;
+	background-color: #d32f2f; /* Darken on hover */
 }
 
 .user-details {
     flex: 1;
+	margin-left: 20px;
 }
 
 form {

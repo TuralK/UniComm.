@@ -42,8 +42,10 @@
         <% if (questions && questions.length) { %>
           <% questions.forEach(question => { %>
             <li class="question-item">
-              <a href="/question/<%= question.question_id %>"><%= question.question_text %> (Asked on <%= question.created_at.toDateString() %>)</a>
-            </li>
+				<a href="/question/<%= question.question_id %>" class="question-link">
+				  <%= question.question_text %> (Asked on <%= question.created_at.toDateString() %>)
+				</a>
+			</li>
           <% }) %>
         <% } else { %>
           <li>No questions have been asked yet.</li>

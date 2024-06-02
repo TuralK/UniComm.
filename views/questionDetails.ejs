@@ -46,7 +46,7 @@
         <h3>Answers</h3>
         <ul class="answers-list">
 			<% if (answers && answers.length) { %>
-				<% answers.forEach(answer => { %>
+				<% answers.reverse().forEach(answer => { %> <!-- Reversing the answers array -->
 					<li class="answer-item">
 						<div class="profile-info">
 							<a href="/profile/<%= answer.Student.id %>" class="profile-link">
@@ -61,7 +61,7 @@
 						<p><%= answer.answer_text %> (Answered on <%= answer.created_at.toDateString() %>)</p>
 						<div class="voting" data-answer-id="<%= answer.answer_id %>">
 							<button class="btn like-button">Like <i class="ri-thumb-up-line"></i></button>
-							<span class="like-count" style="padding-left: 1px; padding-right: 4px; "> <%= answer.likes %> </span>
+							<span class="like-count" style="padding-left: 1px; padding-right: 4px;"> <%= answer.likes %> </span>
 							<button class="btn dislike-button" style="border: 2px;">Dislike <i class="ri-thumb-down-line"></i></button>
 							<span class="dislike-count" style="padding-left: 1px; padding-right: 2px;"><%= answer.dislikes %></span>
 						</div>

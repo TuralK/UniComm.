@@ -11,7 +11,7 @@
             display: none; /* Ensure answers are hidden initially */
             margin-left: 20px;
         }
-		body{
+        body {
             background-image: url('/<%= student.University.uni_id %>.jpg');
         }
     </style>
@@ -20,7 +20,7 @@
     <header>
         <%- include('../nav') %>
     </header>
-   
+
     <div class="profile-container">
         <h1>Profile</h1>
         <div class="user-details-container">
@@ -37,8 +37,10 @@
             
             <input type="file" id="profilePictureInput" name="profilePicture" accept="image/png, image/jpeg" style="display: none;">
             <% if (user && student.id === user.id) { %>
-                <button id="confirmButton" style="display: none;">Confirm</button>
-                <button id="cancelButton" style="display: none;">Cancel</button>
+                <div id="buttonContainer" style="display: none;">
+                    <button id="confirmButton">Confirm</button>
+                    <button id="cancelButton">Cancel</button>
+                </div>
             <% } %>
             <div class="user-details">
                 <h2>User Details</h2>
@@ -81,16 +83,17 @@
             const profilePictureInput = document.getElementById('profilePictureInput');
             const confirmButton = document.getElementById('confirmButton');
             const cancelButton = document.getElementById('cancelButton');
-    
+            const buttonContainer = document.getElementById('buttonContainer');
+
             if (overlay) {
                 profilePictureContainer.addEventListener('mouseenter', () => {
                     overlay.style.display = 'flex';
                 });
-    
+
                 profilePictureContainer.addEventListener('mouseleave', () => {
                     overlay.style.display = 'none';
                 });
-    
+
                 profilePictureInput.addEventListener('change', (event) => {
                     const file = event.target.files[0];
                     if (file) {
@@ -103,19 +106,18 @@
                         const reader = new FileReader();
                         reader.onload = function (e) {
                             document.getElementById('profilePicture').src = e.target.result;
-                            confirmButton.style.display = 'inline-block';
-                            cancelButton.style.display = 'inline-block';
+                            buttonContainer.style.display = 'flex';
                         }
                         reader.readAsDataURL(file);
                     }
                 });
-    
+
                 confirmButton.addEventListener('click', () => {
                     const file = profilePictureInput.files[0];
                     if (file) {
                         const formData = new FormData();
                         formData.append('profilePicture', file);
-    
+
                         fetch('/uploadProfilePicture', {
                             method: 'POST',
                             body: formData
@@ -133,7 +135,7 @@
                         });
                     }
                 });
-    
+
                 cancelButton.addEventListener('click', () => {
                     location.reload(); // Reload the page to revert changes
                 });
