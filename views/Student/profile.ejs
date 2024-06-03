@@ -64,7 +64,7 @@
             <h2>Answered Questions</h2>
             <% Object.keys(questionAnswersMap).forEach(question => { %>
                 <div class="question">
-                    <h3 class="question-text"><%= question %></h3>
+                    <h3 class="question-text">• <%= question %></h3>
                     <div class="answer-details">
                         <% questionAnswersMap[question].forEach(answer => { %>
                             <p><strong>Answer:</strong> <%= answer %></p>
