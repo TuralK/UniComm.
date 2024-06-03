@@ -406,6 +406,7 @@ router.get('/changePassword', (req, res) => {
     }
 
     try {
+		const decoded = jwt.verify(token, 'secretKey');
         // If token is valid, render the page with the token
         res.render('changePassword', { token });
     } catch (err) {
