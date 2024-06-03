@@ -313,68 +313,64 @@ router.get('/profile/:id', auth, async (req, res) => {
 
 
 router.put('/:answerId/vote', async (req, res) => {
-  const answerId = req.params.answerId;
-  const idsCookie = req.cookies.ids;
-  let ids = {};
-
-  if (idsCookie) {
-    ids = JSON.parse(idsCookie);
-  }
-  try {
-    const answer = await Answer_model.findByPk(answerId);
-    if (!answer) {
-      throw new Error("There is no such answer!");
-    }
-    
-    var vote = req.query.vote;
-    const isActive=req.query.isActive;
-    if (!vote || (vote !== 'like' && vote !== 'dislike' && vote !== 'no' )) {
-      return res.status(400).send('Invalid vote type');
-    }
-
-    if (ids[answerId]) {
-      if (vote === 'like' && ids[answerId]== 'like'){
-        if(isActive=='yes'){await answer.decrement('likes'); vote='no'}
-        else{await answer.increment('likes');}
-        }
-      if (vote === 'dislike' && ids[answerId]== 'dislike') {
-        if(isActive=='yes'){await answer.decrement('dislikes'); vote='no'}
-        else{await answer.increment('dislikes');}
-        }
-      
-      if (vote === 'dislike' && ids[answerId]== 'like') {
-        await answer.increment('dislikes');
-        await answer.decrement('likes');
-      }
-      if (vote === 'like' && ids[answerId]== 'dislike') {
-        await answer.decrement('dislikes');
-        await answer.increment('likes');
-      }
-      if (vote === 'like' && ids[answerId]== 'no') {
-        await answer.increment('likes');
-      }
-      if (vote === 'dislike' && ids[answerId]== 'no') {
-        await answer.increment('dislikes');
-      }
-      
-     
-    }
-    else{
-      if (vote === 'like') {
-        await answer.increment('likes');
-      } else if (vote === 'dislike') {
-        await answer.increment('dislikes');
-      }
-    }
-    await answer.reload(); // Ensure latest values are returned
-    ids[answerId] = vote; // Store the answer ID and vote type in the cookie
-    res.cookie('ids', JSON.stringify(ids), { maxAge: 24 * 60 * 60 * 1000 }); // Update cookie
-    res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
-  } catch (error) {
-    console.error("Error recording vote:", error);
-    res.status(500).send("Error recording vote.");
-  }
-});
+	const answerId = req.params.answerId;
+	const idsCookie = req.cookies.ids;
+	let ids = {};
+  
+	if (idsCookie) {
+	  ids = JSON.parse(idsCookie);
+	}
+  
+	try {
+	  const answer = await Answer_model.findByPk(answerId);
+	  if (!answer) {
+		throw new Error("There is no such answer!");
+	  }
+  
+	  const vote = req.query.vote;
+	  const isActive = req.query.isActive;
+  
+	  if (!vote || (vote !== 'like' && vote !== 'dislike')) {
+		return res.status(400).send('Invalid vote type');
+	  }
+  
+	  if (isActive === 'yes') {
+		if (ids[answerId] === vote) {
+		  // User is un-voting
+		  if (vote === 'like') {
+			await answer.decrement('likes');
+		  } else if (vote === 'dislike') {
+			await answer.decrement('dislikes');
+		  }
+		  delete ids[answerId];
+		}
+	  } else {
+		if (ids[answerId]) {
+		  if (ids[answerId] === 'like') {
+			await answer.decrement('likes');
+		  } else if (ids[answerId] === 'dislike') {
+			await answer.decrement('dislikes');
+		  }
+		}
+  
+		if (vote === 'like') {
+		  await answer.increment('likes');
+		} else if (vote === 'dislike') {
+		  await answer.increment('dislikes');
+		}
+  
+		ids[answerId] = vote;
+	  }
+  
+	  await answer.reload(); // Ensure latest values are returned
+	  res.cookie('ids', JSON.stringify(ids), { maxAge: 24 * 60 * 60 * 1000 }); // Update cookie
+	  res.status(200).json({ likes: answer.likes, dislikes: answer.dislikes });
+	} catch (error) {
+	  console.error("Error recording vote:", error);
+	  res.status(500).send("Error recording vote.");
+	}
+  });
+  
 
 router.post("/forgotPassword", async function(req, res) {
     const { email } = req.body;

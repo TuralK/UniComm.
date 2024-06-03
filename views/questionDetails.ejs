@@ -32,15 +32,17 @@
 
 		<% if (userValues && user.userType === 'student' && userValues.uni_id === university.uni_id) { %>
 			<div class="submit-answer">
-			  <form action="/answerQuestion" method="POST">
-				<input type="hidden" name="question_id" value="<%= question.question_id %>">
-				<div class="form-group">
-					<img src="<%= userValues.profilePicture ? userValues.profilePicture : '/default_profile.png' %>" alt="<%= userValues.username %>'s Profile Picture" class="profile-picture">
-				  <textarea oninput="autoResize(this)" class="form-control" name="answer_text" rows="1" placeholder="Write your answer here..."  maxlength="700" required></textarea>
-					<hr>
-				</div>
-				<button style="float: right;" type="submit" class="btn btn-success">Submit Answer</button>
-			  </form>
+				<form action="/answerQuestion" method="POST">
+					<input type="hidden" name="question_id" value="<%= question.question_id %>">
+					<div class="form-group">
+						<div class="profile-info">
+							<img src="<%= userValues.profilePicture ? userValues.profilePicture : '/default_profile.png' %>" alt="<%= userValues.username %>'s Profile Picture" class="profile-picture">
+							<textarea oninput="autoResize(this)" class="form-control" name="answer_text" rows="1" placeholder="Write your answer here..."  maxlength="700" required></textarea>
+						</div>
+						<hr>
+					</div>
+					<button style="float: right;" type="submit" class="btn btn-success">Submit Answer</button>
+				</form>
 			</div>
 		<% } %>
 
@@ -60,15 +62,15 @@
 						</div>
 						<p><%= answer.answer_text %> </p>
 						<div class="voting" data-answer-id="<%= answer.answer_id %>">
-							<button class="btn like-button">Like <i class="ri-thumb-up-line"></i></button>
+							<button class="btn like-button"><i class="ri-thumb-up-line"></i></button>
 							<span class="like-count" style="padding-left: 1px; padding-right: 4px;"> <%= answer.likes %> </span>
-							<button class="btn dislike-button" style="border: 2px;">Dislike <i class="ri-thumb-down-line"></i></button>
+							<button class="btn dislike-button"><i class="ri-thumb-down-line"></i></button>
 							<span class="dislike-count" style="padding-left: 1px; padding-right: 2px;"><%= answer.dislikes %></span>
 						</div>
 					</li>
 				<% }) %>
 			<% } else { %>
-				<li>No answers yet.</li>
+				<li style="margin-left: 10px;">No answers yet.</li>
 			<% } %>
 		</ul>
       </div>
