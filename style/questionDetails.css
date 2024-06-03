@@ -32,12 +32,11 @@ h3 {
 .answer-item {
     padding: 10px 10px 10px 0; /* Adjust padding */
     border-bottom: 1px solid #ccc;
-	margin-left: 10px;
+    margin-left: 10px;
 }
 
 .answer-item p {
-    margin: 5px 0; /* Adjust margin */
-	margin-left: 50px;
+    margin-left: 50px;
 }
 
 .profile-info {
@@ -79,7 +78,6 @@ h3 {
     cursor: pointer;
     border: none;
     border-radius: 4px;
-	margin-left: 50px;
 }
 
 .btn-secondary {
@@ -102,11 +100,25 @@ h3 {
 
 .submit-answer {
     margin-bottom: 20px;
+    align-items: center;
+}
+
+.profile-info {
+    display: flex; /* Make the profile info section a flexbox */
+    align-items: center; /* Align items vertically center */
+}
+
+.profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-bottom: 1px;
 }
 
 .submit-answer .form-group textarea {
+    flex: 1; /* Make the textarea fill remaining space */
     width: 100%;
-    min-height: 40px;
+    min-height: 30px;
     padding: 10px;
     margin-bottom: -5px;
     font-size: 1em;
@@ -117,11 +129,64 @@ h3 {
     background-color: transparent;
 }
 .submit-answer .form-group textarea:focus {
-	display: inline;
+    display: inline;
     outline: none; /* Removes the default focus outline */
 }
 
 .submit-answer .btn-success {
     display: block;
-    margin-left: 10px;
+}
+
+/* Like and Dislike buttons custom styles */
+.voting .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: #606060;
+    font-size: 1.5em;
+    margin-right: 2px; /* Reduce margin to bring them closer */
+}
+
+.voting .btn.clicked {
+    color: black !important; /* Change text color to black when clicked */
+}
+
+/* Additional styles to ensure fully black icons when clicked */
+.voting .btn.clicked i {
+    color: black !important;
+    fill: black !important; /* Fill the icon with black */
+}
+
+.voting .like-button.clicked,
+.voting .dislike-button.clicked {
+    color: black;
+}
+
+.voting .like-button.clicked i,
+.voting .dislike-button.clicked i {
+    color: black;
+}
+
+.voting .like-button {
+	margin-left: 50px;
+}
+
+.like-count,
+.like-button,
+.dislike-count,
+.dislike-button {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.like-count {
+    margin-right: 5px; /* Adjust as needed */
+}
+
+.dislike-count {
+    margin-right: 3px; /* Adjust as needed */
 }

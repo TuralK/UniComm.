@@ -29,13 +29,16 @@
       </div>
 
       <h2>Ask a Question</h2>
-      <form action="/askQuestion" method="POST">
-        <input type="hidden" name="uni_id" value="<%= university.uni_id %>">
-        <div class="form-group">
-          <textarea style="resize: none;" class="form-control" name="question_text" rows="3" placeholder="Ask your question here..."  maxlength="400" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
+		<div class="submit-question">
+			<form action="/askQuestion" method="POST">
+				<input type="hidden" name="uni_id" value="<%= university.uni_id %>">
+				<div class="form-group">
+				<textarea oninput="autoResize(this)" class="form-control" name="question_text" rows="1" placeholder="Ask your question here..." maxlength="400" required></textarea>
+				</div>
+				<hr>
+				<button type="submit" class="btn btn-primary">Submit Question</button>
+			</form>
+		</div>
 
       <h2>Questions</h2>
       <ul class="questions-list">
@@ -67,6 +70,16 @@
     const uniId = logoImages.getAttribute('data-id');
     const universityImage = document.getElementById('logoImage');
     universityImage.src = `/${uniId}.png`;
+
+	function autoResize(textarea) {
+    textarea.style.height = 'auto'; // Reset the height to auto
+    textarea.style.height = '40px'; // Set initial height to one line
+
+    // Check if the content exceeds one line
+    if (textarea.scrollHeight > 40) {
+        textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to the scrollHeight
+    }
+}
   </script>
 </body>
 </html>

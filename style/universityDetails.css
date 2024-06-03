@@ -27,7 +27,7 @@
 .btn-primary {
     background-color: var(--accent-color);
     color: var(--white-color);
-	margin-bottom: 10px;
+	margin-top: 5px;
 }
 
 .btn-success {
@@ -105,3 +105,29 @@
 .answer-count {
 	color: green; /* Change to your desired color for answer count */
 }
+
+.submit-question {
+	margin-bottom: 20px;
+  }
+  
+  .submit-question .form-group textarea {
+	width: 100%;
+    min-height: 30px;
+    padding: 10px;
+    margin-bottom: -5px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+    border: none;
+    background-color: transparent;
+  }
+  
+  .submit-question .form-group textarea:focus {
+	display: inline;
+	outline: none; /* Removes the default focus outline */
+  }
+  
+  .submit-question .btn-primary {
+	display: block;
+  }
