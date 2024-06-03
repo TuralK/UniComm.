@@ -2,6 +2,8 @@ const nodeMailer = require("nodemailer");
 const dotenv = require('dotenv');
 
 const Student_model = require('../models/student-model');
+const StudentFile_model = require('../models/studentFile-model');
+const { where } = require("sequelize");
 
 dotenv.config({ path: './.env'});
 
@@ -10,7 +12,14 @@ exports.updateStudentStatus = async (req, res) => {
     const isApproved = req.body.isApproved === true;
 
     try {
-        const student = await Student_model.findOne({ where: { id: studentId } });
+        const student = await Student_model.findOne({ 
+            where: { id: studentId }
+        });
+
+        const studentFile = await StudentFile_model.findOne({
+            where: {studentId: studentId}
+        })
+
         if (!student) {
             return res.status(404).json({ errors: "Student not found." });
         }
@@ -39,7 +48,7 @@ exports.updateStudentStatus = async (req, res) => {
             await student.destroy();
             return res.status(200).json({ message: "Student registration request rejected and deleted." });
         }
-
+        await studentFile.destroy();
         student.approved = true;
         await student.save();
         res.status(200).json({ message: "Student registration request approved." });
