@@ -6,7 +6,7 @@ registerForm.addEventListener('submit', async (e) => {
     const duplicateError = document.querySelector('.duplicate.error');
     const emailError = document.querySelector('.email.error');
     const passwordError = document.querySelector('.password.error');
-
+    const loadingMessage = document.querySelector('.loading-message');
     const gap_1 = document.querySelector('.gap_1');
     const gap_2 = document.querySelector('.gap_2');
 
@@ -21,6 +21,9 @@ registerForm.addEventListener('submit', async (e) => {
     });
     gap_1.style.display = 'block';
     gap_2.style.display = 'block';
+
+    // Show loading message
+    loadingMessage.style.display = 'block';
 
     // Get form values
     const email = registerForm.querySelector('#email').value;
@@ -47,6 +50,10 @@ registerForm.addEventListener('submit', async (e) => {
             body: formData
         });
         const data = await res.json();
+
+        // Hide loading message
+        loadingMessage.style.display = 'none';
+
         if (data.errors) {
             duplicateError.textContent = data.errors.duplicate;
             emailError.textContent = data.errors.email;
@@ -70,6 +77,7 @@ registerForm.addEventListener('submit', async (e) => {
         }
 
     } catch (err) {
+        loadingMessage.style.display = 'none';
         emailError.textContent = 'Failed to communicate with the server';
         emailError.style.display = 'block';
     }

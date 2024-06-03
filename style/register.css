@@ -231,3 +231,7 @@ img {
   height: 1.75rem;
   display: block;
 }
+
+.centered-message {
+  text-align: center;
+}
